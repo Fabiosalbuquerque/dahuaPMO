@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: dashboard-ds
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /config.js
+        name: Cache-Control
+        value: no-cache
+      - path: /report.json
+        name: Cache-Control
+        value: no-cache
