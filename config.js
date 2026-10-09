@@ -13,7 +13,7 @@ window.DASH_CONFIG = {
   // Como achar cada arquivo na pasta (trecho do nome, aceita expressão regular).
   // Se houver mais de um, o painel usa o alterado mais recentemente.
   files: {
-    projetos: '全部项目|ProjectList',      // abas ProjectList, Technical Support, Call Center
+    projetos: 'main.?control.?table',        // abas ProjectList, Technical Support, Call Center, ITR database
     rma: 'RMA.?consolidado',               // aba Database
     riscos: 'Project.?Database'            // aba que começa com "RAT"
   },

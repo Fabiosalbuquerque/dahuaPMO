@@ -35,9 +35,11 @@ Troque `COLE_AQUI_O_APPLICATION_CLIENT_ID` e `COLE_AQUI_O_DIRECTORY_TENANT_ID` p
 
 Os arquivos são encontrados por **trecho do nome**. Se tiver mais de um arquivo que bate com o trecho, o painel usa o alterado mais recentemente. Então pode continuar subindo versões com data no nome, desde que o trecho continue presente:
 
-- `全部项目` ou `ProjectList`: abas `ProjectList`, `Technical Support` e `Call Center`
-- `RMA consolidado`: aba `Database`
-- `Project Database`: aba cujo nome começa com `RAT` (ex.: `RAT _ Week 39`)
+- `main control table` (ex.: `DS_main_control_table.xlsx`): abas `ProjectList`, `Technical Support`, `Call Center` e `ITR database`
+- `RMA consolidado` (ex.: `RMA_consolidado.xlsx`): aba `Database`
+- `Project Database` (ex.: `Project_Database.xlsx`): aba cujo nome começa com `RAT` (ex.: `RAT _ Week 39`)
+
+A aba `ITR database` é opcional: se não existir, o bloco de ITRs some da aba Suporte técnico e o resto funciona normalmente.
 
 ## Passo 3. Publicar no Render
 
@@ -69,6 +71,29 @@ Para testar no computador antes de publicar, rode na pasta do projeto `python -m
 ## Controle de acesso
 
 Quem pode ver os dados é definido pelo **compartilhamento da pasta** no SharePoint/OneDrive. Para liberar alguém, compartilhe a pasta com a pessoa (somente leitura basta). Para restringir também quem consegue fazer login, use no Entra ID: **Aplicativos empresariais > Painel D&S > Propriedades > Atribuição obrigatória = Sim**, e adicione os usuários ou grupos em **Usuários e grupos**.
+
+## Ano dos projetos e tabelas
+
+- **Visão executiva:** o seletor **Ano** usa a coluna `Import Year` da aba `ProjectList`. No ano mais recente, a barra mostra a carteira do escritório (execução, backlog, operação, estoque e garantia). Nos anos anteriores, mostra a fase atual dos projetos importados naquele ano. Os KPIs de call center e RMA seguem o ano escolhido; os riscos do RAT são sempre os atuais.
+- **Aba Projetos:** filtro **Mostrar** (projetos ativos ou todos os projetos), filtro **Ano** e coluna **Ano** na tabela.
+- **Todas as tabelas:** 10 linhas por página, com botões Anterior/Próxima e altura fixa. Trocar um filtro ou a ordenação volta pra página 1.
+
+## Tickets e ITRs (aba Suporte técnico)
+
+- **Tickets de engenharia:** todas as linhas da aba `Technical Support`.
+- **Com ITR:** só as linhas em que a coluna `ITR Number` tem um número de caso da HQ (ex.: `F202607080033` ou `ERR250925005`). Texto solto nessa coluna não conta.
+- **ITRs abertos na HQ:** casos da aba `ITR database`, no ano mais recente da base. O gráfico separa "Suporte técnico de produto" (o mesmo número do slide "Open ITRs by month") dos outros tipos de caso.
+- **ITRs em andamento:** casos da `ITR database` com status diferente de `Closed`, do mais antigo para o mais novo.
+
+## Idiomas (PT / EN)
+
+O painel tem português e inglês. O seletor **PT | EN** fica no canto superior direito, inclusive na tela de login.
+
+- **Idioma inicial:** segue o idioma do navegador (português abre em PT, o resto em EN). Depois que a pessoa escolhe, o painel lembra a escolha naquele navegador.
+- **Link direto em inglês:** acrescente `?lang=en` ao endereço, por exemplo `https://dashboard-ds.onrender.com/?lang=en`. Útil pra mandar pra HQ. `?lang=pt` força português.
+- **Textos da interface:** ficam no início do script do `index.html`, no objeto `I18N`, com um bloco `pt` e um `en`.
+- **Textos da semana:** no `report.json`, a versão em português fica na raiz e a inglesa dentro do bloco `"en"`. Ao atualizar o report, atualize os dois. Se faltar algum campo no bloco `"en"`, o painel mostra a versão em português daquele campo.
+- **Dados das planilhas** (nomes de projetos, clientes, títulos do RAT, modelos) aparecem como estão no Excel, nas duas línguas.
 
 ## Atualização
 

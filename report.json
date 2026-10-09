@@ -1,19 +1,250 @@
-{"semana":40,"data":"2026-10-02","resumo":"A semana 40 teve foco em entrega de projetos, suporte técnico e operação de RMA. São 55 projetos em andamento, com 551 projetos criados em 2026. Prioridades: customização do DSS da Shopee, redução do backlog de RMA e resolução de issues críticas.",
-"destaques":["551 novos projetos criados em 2026","55 projetos ativos (30 ToB, 25 ToG), contando 1 em fase de operação","464 projetos já em fase de garantia","56 projetos de estoque de material concluídos","3.768 tickets de suporte técnico processados no ano","1.008 RMAs criados em 2026"],
-"alertas":[{"nivel":"Alto","texto":"Shopee: detector de metais gerando falso alarme (ITR F202607080033)"},{"nivel":"Alto","texto":"CDAE: risco alto na solução técnica, comissionamento do sistema em andamento"},{"nivel":"Médio","texto":"Transvia: issues de DSS e hardware em acompanhamento até a conclusão"}],
-"proximos":["Seguir monitorando as issues técnicas de alta prioridade","Reduzir o backlog de RMA e melhorar os indicadores de aging","Manter o cronograma de entregas e as atividades de suporte regional"],
-"supervisionados":[{"grupo":"Atividades de projetos 2026","qtd":7,"itens":"RJ Mobile (2), São Paulo SSP – SW (2), ES SEDUC – Telas Interativas (3), Shopee DSS Customization (2)"},{"grupo":"Backlog","qtd":3,"itens":"CDAE, Arcade (Casa Civil – MT), Monitoramento CPTM | Transvia"},{"grupo":"Early involvement","qtd":1,"itens":"Savegnago supermercados"},{"grupo":"Fase de operação","qtd":1,"itens":"LPR ES State"},{"grupo":"CLI / Early involvement","qtd":4,"itens":"PMESP CLI, Carrefour CLI, Gato Preto, Santa Brígida"}],
-"hotRisks":[
-{"cliente":"SEDUC","tema":"Contrato de serviço","info":"Bloqueio contratual resolvido. Em processo de assinatura."},
-{"cliente":"SEDUC","tema":"Envio de material pela HQ","info":"Envio desbloqueado. Detectadas 2 telas com problema de hardware que não foram enviadas pela HQ."},
-{"cliente":"CDAE","tema":"Solução e comissionamento","info":"Controlador da micro estação e reagentes recebidos no Brasil. Sistema em comissionamento."},
-{"cliente":"Shopee","tema":"Qualidade: falso alarme no detector de metais","info":"Reunião com o cliente, layout padrão de instalação e configuração compartilhados. Time de entrega monitorando os resultados."},
-{"cliente":"Transvia","tema":"Placa WS com falha funcional","info":"RMA em andamento, será necessário instalar uma nova placa."},
-{"cliente":"Transvia","tema":"Sensor da catraca","info":"Modo bidirecional não funciona corretamente. HQ vai liberar novo firmware em 19/10."},
-{"cliente":"Transvia","tema":"Servidores Lenovo","info":"2 seguem na garantia; demais em cotação de garantia estendida com a Lenovo Brasil."},
-{"cliente":"Connectoway","tema":"LED Outdoor P5.0: entrada de água","info":"Alinhamento com Product Sales Management e acompanhamento das ações corretivas. Previsão de envio da China ainda indefinida."},
-{"cliente":"Jundiaí – Net Telecom","tema":"LED P2.5: falhas recorrentes de módulo","info":"Hardware previsto para a semana 44, mas a HQ ainda não enviou. Previsão atual: fim de outubro."},
-{"cliente":"Rede Prime – Ceará","tema":"LED P2.5: falhas recorrentes de módulo","info":"HQ envolvida, estratégia de substituição em andamento. Previsão: fim de outubro."},
-{"cliente":"Security Energy","tema":"Antenas EAS","info":"Produto em fabricação, chegada prevista na semana 45."},
-{"cliente":"SSP","tema":"DSS Extreme","info":"Relatório de divergência de medição do motor de analytics em acordo para coleta de dados e análise final."},
-{"cliente":"L8","tema":"Raio-X (RMA 4122)","info":"HQ recomendou trocar o tubo, mas a avaliação de campo indica possível problema na placa de controle. Inspeção da placa em andamento e importação de uma placa reserva em avaliação."}]}
+{
+ "semana": 40,
+ "data": "2026-10-02",
+ "resumo": "A semana 40 teve foco em entrega de projetos, suporte técnico e operação de RMA. São 55 projetos em andamento, com 551 projetos criados em 2026. Prioridades: customização do DSS da Shopee, redução do backlog de RMA e resolução de issues críticas.",
+ "destaques": [
+  "551 novos projetos criados em 2026",
+  "55 projetos ativos (30 ToB, 25 ToG), contando 1 em fase de operação",
+  "464 projetos já em fase de garantia",
+  "56 projetos de estoque de material concluídos",
+  "3.768 tickets de suporte técnico processados no ano",
+  "1.008 RMAs criados em 2026"
+ ],
+ "alertas": [
+  {
+   "nivel": "Alto",
+   "texto": "Shopee: detector de metais gerando falso alarme (ITR F202607080033)"
+  },
+  {
+   "nivel": "Alto",
+   "texto": "CDAE: risco alto na solução técnica, comissionamento do sistema em andamento"
+  },
+  {
+   "nivel": "Médio",
+   "texto": "Transvia: issues de DSS e hardware em acompanhamento até a conclusão"
+  }
+ ],
+ "proximos": [
+  "Seguir monitorando as issues técnicas de alta prioridade",
+  "Reduzir o backlog de RMA e melhorar os indicadores de aging",
+  "Manter o cronograma de entregas e as atividades de suporte regional"
+ ],
+ "supervisionados": [
+  {
+   "grupo": "Atividades de projetos 2026",
+   "qtd": 7,
+   "itens": "RJ Mobile (2), São Paulo SSP – SW (2), ES SEDUC – Telas Interativas (3), Shopee DSS Customization (2)"
+  },
+  {
+   "grupo": "Backlog",
+   "qtd": 3,
+   "itens": "CDAE, Arcade (Casa Civil – MT), Monitoramento CPTM | Transvia"
+  },
+  {
+   "grupo": "Early involvement",
+   "qtd": 1,
+   "itens": "Savegnago supermercados"
+  },
+  {
+   "grupo": "Fase de operação",
+   "qtd": 1,
+   "itens": "LPR ES State"
+  },
+  {
+   "grupo": "CLI / Early involvement",
+   "qtd": 4,
+   "itens": "PMESP CLI, Carrefour CLI, Gato Preto, Santa Brígida"
+  }
+ ],
+ "hotRisks": [
+  {
+   "cliente": "SEDUC",
+   "tema": "Contrato de serviço",
+   "info": "Bloqueio contratual resolvido. Em processo de assinatura."
+  },
+  {
+   "cliente": "SEDUC",
+   "tema": "Envio de material pela HQ",
+   "info": "Envio desbloqueado. Detectadas 2 telas com problema de hardware que não foram enviadas pela HQ."
+  },
+  {
+   "cliente": "CDAE",
+   "tema": "Solução e comissionamento",
+   "info": "Controlador da micro estação e reagentes recebidos no Brasil. Sistema em comissionamento."
+  },
+  {
+   "cliente": "Shopee",
+   "tema": "Qualidade: falso alarme no detector de metais",
+   "info": "Reunião com o cliente, layout padrão de instalação e configuração compartilhados. Time de entrega monitorando os resultados."
+  },
+  {
+   "cliente": "Transvia",
+   "tema": "Placa WS com falha funcional",
+   "info": "RMA em andamento, será necessário instalar uma nova placa."
+  },
+  {
+   "cliente": "Transvia",
+   "tema": "Sensor da catraca",
+   "info": "Modo bidirecional não funciona corretamente. HQ vai liberar novo firmware em 19/10."
+  },
+  {
+   "cliente": "Transvia",
+   "tema": "Servidores Lenovo",
+   "info": "2 seguem na garantia; demais em cotação de garantia estendida com a Lenovo Brasil."
+  },
+  {
+   "cliente": "Connectoway",
+   "tema": "LED Outdoor P5.0: entrada de água",
+   "info": "Alinhamento com Product Sales Management e acompanhamento das ações corretivas. Previsão de envio da China ainda indefinida."
+  },
+  {
+   "cliente": "Jundiaí – Net Telecom",
+   "tema": "LED P2.5: falhas recorrentes de módulo",
+   "info": "Hardware previsto para a semana 44, mas a HQ ainda não enviou. Previsão atual: fim de outubro."
+  },
+  {
+   "cliente": "Rede Prime – Ceará",
+   "tema": "LED P2.5: falhas recorrentes de módulo",
+   "info": "HQ envolvida, estratégia de substituição em andamento. Previsão: fim de outubro."
+  },
+  {
+   "cliente": "Security Energy",
+   "tema": "Antenas EAS",
+   "info": "Produto em fabricação, chegada prevista na semana 45."
+  },
+  {
+   "cliente": "SSP",
+   "tema": "DSS Extreme",
+   "info": "Relatório de divergência de medição do motor de analytics em acordo para coleta de dados e análise final."
+  },
+  {
+   "cliente": "L8",
+   "tema": "Raio-X (RMA 4122)",
+   "info": "HQ recomendou trocar o tubo, mas a avaliação de campo indica possível problema na placa de controle. Inspeção da placa em andamento e importação de uma placa reserva em avaliação."
+  }
+ ],
+ "en": {
+  "resumo": "Week 40 focused on project delivery, technical support and RMA operations. There are 55 ongoing projects, with 551 projects created in 2026. Priorities: Shopee DSS customization, RMA backlog reduction and resolution of critical issues.",
+  "destaques": [
+   "551 new projects created in 2026",
+   "55 active projects (30 ToB, 25 ToG), including 1 in operation phase",
+   "464 projects already in warranty phase",
+   "56 material stock projects delivered",
+   "3,768 technical support tickets processed this year",
+   "1,008 RMAs created in 2026"
+  ],
+  "alertas": [
+   {
+    "nivel": "High",
+    "texto": "Shopee: metal detector generating false alarms (ITR F202607080033)"
+   },
+   {
+    "nivel": "High",
+    "texto": "CDAE: high risk on the technical solution, system commissioning in progress"
+   },
+   {
+    "nivel": "Medium",
+    "texto": "Transvia: DSS and hardware issues being tracked until completion"
+   }
+  ],
+  "proximos": [
+   "Keep monitoring high-priority technical issues",
+   "Reduce the RMA backlog and improve aging indicators",
+   "Keep the delivery schedule and regional support activities on track"
+  ],
+  "supervisionados": [
+   {
+    "grupo": "2026 project activities",
+    "qtd": 7,
+    "itens": "RJ Mobile (2), São Paulo SSP – SW (2), ES SEDUC – Interactive Displays (3), Shopee DSS Customization (2)"
+   },
+   {
+    "grupo": "Backlog",
+    "qtd": 3,
+    "itens": "CDAE, Arcade (Casa Civil – MT), CPTM Monitoring | Transvia"
+   },
+   {
+    "grupo": "Early involvement",
+    "qtd": 1,
+    "itens": "Savegnago supermarkets"
+   },
+   {
+    "grupo": "Operation phase",
+    "qtd": 1,
+    "itens": "LPR ES State"
+   },
+   {
+    "grupo": "CLI / Early involvement",
+    "qtd": 4,
+    "itens": "PMESP CLI, Carrefour CLI, Gato Preto, Santa Brígida"
+   }
+  ],
+  "hotRisks": [
+   {
+    "cliente": "SEDUC",
+    "tema": "Service contract",
+    "info": "Contract blocker resolved. Signature in progress."
+   },
+   {
+    "cliente": "SEDUC",
+    "tema": "Material shipment from HQ",
+    "info": "Shipment unblocked. 2 displays with hardware problems were found and not shipped by HQ."
+   },
+   {
+    "cliente": "CDAE",
+    "tema": "Solution and commissioning",
+    "info": "Micro-station controller and reagents received in Brazil. System being commissioned."
+   },
+   {
+    "cliente": "Shopee",
+    "tema": "Quality: metal detector false alarm",
+    "info": "Meeting held with the customer; standard installation layout and configuration shared. Delivery team monitoring results."
+   },
+   {
+    "cliente": "Transvia",
+    "tema": "WS board functional failure",
+    "info": "RMA in progress; a new board will need to be installed."
+   },
+   {
+    "cliente": "Transvia",
+    "tema": "Turnstile sensor",
+    "info": "Bidirectional mode not working properly. HQ will release new firmware on Oct 19."
+   },
+   {
+    "cliente": "Transvia",
+    "tema": "Lenovo servers",
+    "info": "2 still under warranty; the rest are being quoted for extended warranty with Lenovo Brazil."
+   },
+   {
+    "cliente": "Connectoway",
+    "tema": "Outdoor LED P5.0: water ingress",
+    "info": "Aligned with Product Sales Management and tracking corrective actions. Shipping date from China still undefined."
+   },
+   {
+    "cliente": "Jundiaí – Net Telecom",
+    "tema": "LED P2.5: recurring module failures",
+    "info": "Hardware planned for week 44, but HQ has not shipped it yet. Current forecast: end of October."
+   },
+   {
+    "cliente": "Rede Prime – Ceará",
+    "tema": "LED P2.5: recurring module failures",
+    "info": "HQ involved, replacement strategy in progress. Forecast: end of October."
+   },
+   {
+    "cliente": "Security Energy",
+    "tema": "EAS antennas",
+    "info": "Product in manufacturing, expected arrival in week 45."
+   },
+   {
+    "cliente": "SSP",
+    "tema": "DSS Extreme",
+    "info": "Report on analytics engine measurement divergence agreed for data collection and final analysis."
+   },
+   {
+    "cliente": "L8",
+    "tema": "X-ray (RMA 4122)",
+    "info": "HQ recommended replacing the tube, but field evaluation points to a possible control board problem. Board inspection in progress and import of a spare board under evaluation."
+   }
+  ]
+ }
+}
