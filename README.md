@@ -1,4 +1,4 @@
-# Painel de projetos Brasil D&S
+# Brazil Delivery Management System
 
 Painel web estático que lê os Excel direto da pasta do SharePoint/OneDrive, com login Microsoft da empresa. Cada pessoa vê os dados com a própria permissão: quem não tem acesso à pasta entra no painel, mas não vê nada.
 
@@ -10,6 +10,7 @@ Painel web estático que lê os Excel direto da pasta do SharePoint/OneDrive, co
 | `config.js` | IDs do app na Microsoft, link da pasta e nomes dos arquivos |
 | `report.json` | Textos da semana: resumo, destaques, alertas, próximos passos e hot risks |
 | `render.yaml` | Configuração opcional para o Render (Blueprint) |
+| `brazil-states.geojson` | Contornos dos estados para o mapa de RMAs (Code for America, licença MIT) |
 
 ## Passo 1. Registrar o app no Microsoft Entra ID (TI, uns 15 minutos)
 
@@ -77,6 +78,18 @@ Quem pode ver os dados é definido pelo **compartilhamento da pasta** no SharePo
 - **Visão executiva:** o seletor **Ano** usa a coluna `Import Year` da aba `ProjectList`. No ano mais recente, a barra mostra a carteira do escritório (execução, backlog, operação, estoque e garantia). Nos anos anteriores, mostra a fase atual dos projetos importados naquele ano. Os KPIs de call center e RMA seguem o ano escolhido; os riscos do RAT são sempre os atuais.
 - **Aba Projetos:** filtro **Mostrar** (projetos ativos ou todos os projetos), filtro **Ano** e coluna **Ano** na tabela.
 - **Todas as tabelas:** 10 linhas por página, com botões Anterior/Próxima e altura fixa. Trocar um filtro ou a ordenação volta pra página 1.
+
+## Filtros da aba Suporte técnico
+
+- **Ano:** o call center usa o mês da planilha, a base de ITR usa a coluna `Year` e os tickets da aba `Technical Support` usam o ano da `Start Time` (sem data, o ticket entra no ano mais recente da planilha).
+- **Responsável:** usa a coluna `Dahua Brasil Responsible`. Nos ITRs, a pessoa é encontrada pelo primeiro nome do `Case Owner` (ex.: "Octávio" = "Octavio Jose Spirandeli"). O call center não tem responsável na planilha, então continua mostrando a equipe toda.
+- **Issues por produto:** períodos de 4 semanas, 8 semanas (padrão) ou ano todo.
+
+## Mapa de RMAs (aba RMA)
+
+- Usa a coluna `State` (UF) da aba `Database` e segue os filtros da aba (ano, service center, garantia). O botão "Em aberto" mostra só os RMAs abertos.
+- Biblioteca: **Leaflet** (gratuita, código aberto). Fundo do mapa: **CARTO** sobre dados do OpenStreetMap, gratuito para uso não comercial e com atribuição, que já aparece no canto do mapa. Para uso interno de baixo volume não há custo nem cadastro.
+- O arquivo `brazil-states.geojson` precisa estar no repositório junto com o `index.html`.
 
 ## Tickets e ITRs (aba Suporte técnico)
 

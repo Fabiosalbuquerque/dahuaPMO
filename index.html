@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Brasil D&amp;S – Painel de projetos</title>
+<title>Brazil Delivery Management System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -92,6 +93,20 @@ select,input[type=search]{font:15px var(--body);color:var(--ink);background:var(
 .pager{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:10px;font-size:13px;color:var(--muted)}
 .pager .chip{padding:4px 10px;font-size:13px}
 .pager .chip[disabled]{opacity:.4;cursor:default}
+.filters .note{align-self:center;font-size:13px;color:var(--muted)}
+.mapgrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.mapgrid{grid-template-columns:minmax(0,1fr)}}
+#rMap{height:460px;border-radius:4px;border:1px solid var(--line);background:var(--panel2)}
+.leaflet-container{font-family:var(--body)}
+.maplegend{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.maplegend i{display:inline-block;width:22px;height:10px;border-radius:2px}
+.ufrank{list-style:none;margin:0;padding:0;font-size:14px}
+.ufrank li{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.ufrank li:hover b{text-decoration:underline}
+.ufrank .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;gap:0}
+.ufrank .bar span{display:block;height:100%;background:var(--s1)}
+.ufrank em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted)}
+.maptip b{font-family:var(--cond);font-size:15px}
 .yearsel{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-left:auto}
 .yearsel select{min-width:0}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -181,6 +196,11 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 </section>
 
 <section class="view" id="v-sup">
+  <div class="filters">
+    <label><span data-i18n="fYear"></span><select id="sY"></select></label>
+    <label><span data-i18n="cResp"></span><select id="sR"><option value="" data-i18n="all"></option></select></label>
+    <span class="note" id="sNote" hidden data-i18n="ccNoResp"></span>
+  </div>
   <div class="grid g4" id="sKpis"></div>
   <div class="panel mt"><h2><span data-i18n="hCC"></span><small data-i18n="sCC"></small></h2><div class="chart tall"><canvas id="cCC"></canvas></div></div>
   <div class="grid g2 mt">
@@ -191,7 +211,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <div class="panel"><h2 data-i18n="hProd"></h2>
       <div class="chips" id="sPer" style="margin-bottom:10px">
         <button class="chip" data-p="4" aria-pressed="false" data-i18n="p4"></button>
-        <button class="chip" data-p="13" aria-pressed="true" data-i18n="p13"></button>
+        <button class="chip" data-p="8" aria-pressed="true" data-i18n="p8"></button>
         <button class="chip" data-p="0" aria-pressed="false" data-i18n="pYear"></button>
       </div>
       <div class="chart tall"><canvas id="cProd"></canvas></div></div>
@@ -211,6 +231,10 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   </div>
   <div class="grid g4" id="rKpis"></div>
   <div class="panel mt"><h2><span data-i18n="hYoY"></span><small data-i18n="sYoY"></small></h2><div class="chart tall"><canvas id="cYoY"></canvas></div></div>
+  <div class="panel mt" id="mapPanel"><h2><span data-i18n="hMap"></span><small id="mapSub"></small></h2>
+    <div class="chips" id="mapMode" style="margin-bottom:10px"><button class="chip" data-m="all" aria-pressed="true" data-i18n="mapAll"></button><button class="chip" data-m="open" aria-pressed="false" data-i18n="mapOpen"></button></div>
+    <div class="mapgrid"><div><div id="rMap" role="img" data-i18n-aria="hMap"></div><div class="maplegend" id="mapLegend"></div></div><div><ul class="ufrank" id="ufRank"></ul><p class="count" id="ufNote"></p></div></div>
+  </div>
   <div class="grid g2 mt">
     <div class="panel"><h2><span data-i18n="hSC"></span><small data-i18n="sSC"></small></h2><div class="chart"><canvas id="cSC"></canvas></div></div>
     <div class="panel"><h2 data-i18n="hAge"></h2><div class="chart"><canvas id="cAge"></canvas></div></div>
@@ -242,13 +266,14 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ===== Idiomas (PT / EN) =====
    Todos os textos da interface ficam aqui. Para mudar um texto, edite as duas línguas.
    Valores que vêm das planilhas (nomes de projetos, clientes, títulos do RAT) aparecem como estão no Excel. */
 const I18N = {
 pt: {
-  title:'Brasil D&S – Painel de projetos', gateTitle:'Painel de projetos Brasil D&S', tabsAria:'Seções',
+  title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções',
   weekLine:'Semana <strong>{w}</strong>, report de <strong>{d}</strong>',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
   tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
@@ -275,13 +300,14 @@ pt: {
   hLevel:'Projetos por nível', sLevel:'por tipo', hPhase:'Projetos por fase', hInd:'Projetos por indústria', sInd:'valor de contrato em USD',
   hProjTbl:'Projetos em andamento', cProject:'Projeto', cClass:'Classificação', cType:'Tipo', cLevel:'Nível', cPhase:'Fase', cContract:'Contrato (USD)',
   dsProjects:'Projetos', notInformed:'Não informado', noProj:'Nenhum projeto com esses filtros. Limpe a busca ou troque um filtro.', pCount:'{n} projetos. Clique no título da coluna para ordenar.',
-  kCC:'Tickets de call center em 2026', kEng:'Tickets de engenharia no ano', kEngD:'{n} com ITR · {c} fechados na semana {w}', kItr:'ITRs abertos na HQ em {y}', kItrD:'{n} ainda em andamento', kOpenWait:'Tickets em aberto ou aguardando',
+  kCC:'Tickets de call center em 2026', kCCY:'Tickets de call center em {y}', kEngY:'Tickets de engenharia em {y}', ccNoResp:'O call center não tem responsável na planilha: os gráficos de call center mostram a equipe toda.', kEng:'Tickets de engenharia no ano', kEngD:'{n} com ITR · {c} fechados na semana {w}', kItr:'ITRs abertos na HQ em {y}', kItrD:'{n} ainda em andamento', kOpenWait:'Tickets em aberto ou aguardando',
   hItrMonth:'ITRs abertos na HQ por mês', itrSrc:'Fonte: aba ITR database. Só conta como ITR o caso com número na base da HQ.', hItrOpen:'ITRs em andamento', cProdLine:'Linha de produto', cDays:'Dias', dsPts:'Suporte técnico de produto', dsOtherTypes:'Outros tipos', total:'Total', noItrOpen:'Nenhum ITR em andamento.',
   hCC:'Call center por mês', sCC:'suporte técnico e RMA', hCh:'Canais de atendimento por mês', hWk:'Tickets de engenharia por semana', sWk:'abertos e fechados',
-  hProd:'Issues por produto', p4:'4 semanas', p13:'13 semanas', pYear:'Ano todo', hOpen:'Tickets em aberto',
+  hProd:'Issues por produto', p4:'4 semanas', p8:'8 semanas', pYear:'Ano todo', hOpen:'Tickets em aberto',
   cCustomer:'Cliente', cProduct:'Produto', cResp:'Responsável', cWeek:'Semana', cWk:'Sem.', dsSupport:'Suporte técnico', chPortal:'Portal de suporte', chCalls:'Ligações', chRma:'Portal de RMA',
   dsOpened:'Abertos', dsClosed:'Fechados', wkPrefix:'S', noOpen:'Nenhum ticket em aberto.',
   fYear:'Ano', fWarr:'Garantia', iwOow:'IW e OOW', kRmaIn:'RMAs em {y}', kRmaInPrev:'{n} em {y}', kOpen:'Em aberto', kOow:'Fora de garantia (OOW)', kAvg:'Tempo médio dos fechados', days:'{n} dias',
+  hMap:'RMAs por estado', mapAll:'Todos os RMAs', mapOpen:'Em aberto', mapScale:'RMAs:', mapTipN:'{n} RMAs', mapTipOpen:'{n} em aberto', mapTipNone:'Nenhum RMA', mapNoData:'Nenhum RMA com esses filtros.', mapMore:'+{n} estados no mapa.', mapNoUf:'{n} RMAs sem estado informado.', mapFail:'Não foi possível carregar o mapa (arquivo brazil-states.geojson).',
   hYoY:'RMAs por mês', sYoY:'comparação com o ano anterior', hSC:'RMAs por service center', sSC:'IW e OOW', hAge:'RMAs abertos por tempo', hReg:'RMAs por região', hModel:'Modelos com mais RMAs',
   cModel:'Modelo', cOpen:'Abertos', age1:'0 a 7 dias', age2:'8 a 30 dias', age3:'Mais de 30 dias',
   hHot:'Principais riscos e issues dos projetos atuais', cRiskIssue:'Risco ou issue', cSituation:'Situação', hRat:'Registro de riscos e issues',
@@ -290,7 +316,7 @@ pt: {
   tRisk:'Risco', tIssue:'Issue', agClosed:'Fechado', noProg:'Sem andamento registrado.', noRat:'Nenhum registro com esses filtros.', clickRow:'Clique numa linha para ver o andamento.'
 },
 en: {
-  title:'Brazil D&S – Project dashboard', gateTitle:'Brazil D&S project dashboard', tabsAria:'Sections',
+  title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections',
   weekLine:'Week <strong>{w}</strong>, report of <strong>{d}</strong>',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
   tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
@@ -317,13 +343,14 @@ en: {
   hLevel:'Projects by level', sLevel:'by type', hPhase:'Projects by phase', hInd:'Projects by industry', sInd:'contract value in USD',
   hProjTbl:'Ongoing projects', cProject:'Project', cClass:'Classification', cType:'Type', cLevel:'Level', cPhase:'Phase', cContract:'Contract (USD)',
   dsProjects:'Projects', notInformed:'Not specified', noProj:'No projects match these filters. Clear the search or change a filter.', pCount:'{n} projects. Click a column header to sort.',
-  kCC:'Call center tickets in 2026', kEng:'Engineering tickets this year', kEngD:'{n} with ITR · {c} closed in week {w}', kItr:'ITRs opened at HQ in {y}', kItrD:'{n} still in progress', kOpenWait:'Open or waiting tickets',
+  kCC:'Call center tickets in 2026', kCCY:'Call center tickets in {y}', kEngY:'Engineering tickets in {y}', ccNoResp:'The call center sheet has no owner column: call center charts show the whole team.', kEng:'Engineering tickets this year', kEngD:'{n} with ITR · {c} closed in week {w}', kItr:'ITRs opened at HQ in {y}', kItrD:'{n} still in progress', kOpenWait:'Open or waiting tickets',
   hItrMonth:'ITRs opened at HQ by month', itrSrc:'Source: ITR database sheet. Only cases with an HQ case number count as ITRs.', hItrOpen:'ITRs in progress', cProdLine:'Product line', cDays:'Days', dsPts:'Product technical support', dsOtherTypes:'Other types', total:'Total', noItrOpen:'No ITRs in progress.',
   hCC:'Call center by month', sCC:'technical support and RMA', hCh:'Service channels by month', hWk:'Engineering tickets by week', sWk:'opened and closed',
-  hProd:'Issues by product', p4:'4 weeks', p13:'13 weeks', pYear:'Full year', hOpen:'Open tickets',
+  hProd:'Issues by product', p4:'4 weeks', p8:'8 weeks', pYear:'Full year', hOpen:'Open tickets',
   cCustomer:'Customer', cProduct:'Product', cResp:'Owner', cWeek:'Week', cWk:'Wk', dsSupport:'Technical support', chPortal:'Support portal', chCalls:'Phone calls', chRma:'RMA portal',
   dsOpened:'Opened', dsClosed:'Closed', wkPrefix:'W', noOpen:'No open tickets.',
   fYear:'Year', fWarr:'Warranty', iwOow:'IW and OOW', kRmaIn:'RMAs in {y}', kRmaInPrev:'{n} in {y}', kOpen:'Open', kOow:'Out of warranty (OOW)', kAvg:'Average time to close', days:'{n} days',
+  hMap:'RMAs by state', mapAll:'All RMAs', mapOpen:'Open', mapScale:'RMAs:', mapTipN:'{n} RMAs', mapTipOpen:'{n} open', mapTipNone:'No RMAs', mapNoData:'No RMAs match these filters.', mapMore:'+{n} more states on the map.', mapNoUf:'{n} RMAs without a state.', mapFail:'Could not load the map (brazil-states.geojson file).',
   hYoY:'RMAs by month', sYoY:'compared with the previous year', hSC:'RMAs by service center', sSC:'IW and OOW', hAge:'Open RMAs by age', hReg:'RMAs by region', hModel:'Models with most RMAs',
   cModel:'Model', cOpen:'Open', age1:'0 to 7 days', age2:'8 to 30 days', age3:'Over 30 days',
   hHot:'Top risks and issues of current projects', cRiskIssue:'Risk or issue', cSituation:'Status', hRat:'Risk and issue log',
@@ -350,7 +377,7 @@ let LANG = (() => {
   return /^pt/i.test(navigator.language || '') ? 'pt' : 'en';
 })();
 const LOC = () => LANG === 'pt' ? 'pt-BR' : 'en-US';
-const L = () => LABELS[LANG];
+const LB = () => LABELS[LANG];
 function t(k, v) { let s = (I18N[LANG][k] ?? I18N.pt[k] ?? k); if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return s; }
 /* Textos do report: report.json tem a versão em português na raiz e a inglesa no bloco "en" */
 const rp = f => (LANG !== 'pt' && REP && REP[LANG] && REP[LANG][f] != null) ? REP[LANG][f] : REP[f];
@@ -436,6 +463,8 @@ function clean(v) {
   if (typeof v === 'string') { v = v.trim(); return ['', '0', '#N/A', '-', 'nan'].includes(v) ? null : v; }
   return v;
 }
+/* chave de pessoa: primeiro nome sem acento e sem o ID entre parênteses ("Octávio" = "Octavio Jose Spirandeli(123)") */
+const personKey = v => v ? String(v).replace(/\(.*?\)/g, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().split(/\s+/)[0] || null : null;
 const num = v => { v = clean(v); if (v === null) return null; const n = Number(v); return isNaN(n) ? v : n; };
 function sheet(wb, name) {
   const ws = wb.Sheets[name];
@@ -451,14 +480,19 @@ function mapRows(ws, mp) {
 function parseProjetos(wb) {
   const projects = mapRows(sheet(wb, 'ProjectList'), { id: 'Contract No', yr: 'Import Year', c: 'Report Classification', t: 'Project Type', l: 'Project Level', ph: 'Project Phase', n: 'Project Resumed Name', cn: 'Contract Name', pm: 'Local Project Manager', pm2: 'Project Manager', ind: 'Industry Line One', amt: 'Contract Amount(USD)', cust: 'Customer Of Party A', sign: 'Contract Sign Date' });
   projects.forEach(p => { p.yr = num(p.yr); p.amt = num(p.amt); });
-  const support = mapRows(sheet(wb, 'Technical Support'), { itr: 'ITR Number', cust: 'Customer', cat: 'Product Category', resp: 'Dahua Brasil Responsible', st: 'Status', wo: 'Week Open', wc: 'Week Close', rs: 'Report Status', own: 'Owner Ticket', ag: 'Aging Bucket', prod: 'Product / Model' })
+  const support = mapRows(sheet(wb, 'Technical Support'), { itr: 'ITR Number', cust: 'Customer', cat: 'Product Category', resp: 'Dahua Brasil Responsible', st: 'Status', wo: 'Week Open', wc: 'Week Close', rs: 'Report Status', own: 'Owner Ticket', ag: 'Aging Bucket', prod: 'Product / Model', start: 'Start Time' })
     .filter(s => s.st || s.cust);
   support.forEach(s => {
     s.wo = num(s.wo); s.wc = num(s.wc); if (s.prod) s.prod = String(s.prod).slice(0, 140);
     // só é ITR quando a coluna "ITR Number" tem um número de caso da HQ (ex.: F202607080033, ERR250925005)
     const m = s.itr ? String(s.itr).match(/\b(F\d{12}|ERR\d{9})/) : null;
     s.itr = m ? m[1] : null;
+    s.rk = personKey(s.resp);
+    s.yr = s.start ? +String(s.start).slice(0, 4) : null;
   });
+  /* a aba não tem coluna de ano: usa o ano da Start Time; ticket sem data fica no ano mais recente da planilha */
+  const tsYear = Math.max(0, ...support.map(s => s.yr || 0)) || new Date().getFullYear();
+  support.forEach(s => { if (!s.yr) s.yr = tsYear; });
   // Call Center: localiza o cabeçalho "Mês" e lê as linhas seguintes até a primeira sem data
   const rows = XLSX.utils.sheet_to_json(sheet(wb, 'Call Center'), { header: 1, defval: null, raw: true, blankrows: true });
   const callCenter = [];
@@ -476,8 +510,8 @@ function parseProjetos(wb) {
 function parseItr(wb) {
   const ws = wb.Sheets['ITR database'];
   if (!ws) return null;
-  return mapRows(ws, { id: 'Case Number', type: 'Case Type', y: 'Year', mo: 'Submitted month', st: 'Status', age: 'Aging', cust: 'Customer Name', line: 'Product line', subj: 'Subject' })
-    .filter(r => r.id).map(r => Object.assign(r, { y: num(r.y), mo: num(r.mo), age: num(r.age) }));
+  return mapRows(ws, { id: 'Case Number', type: 'Case Type', y: 'Year', mo: 'Submitted month', st: 'Status', age: 'Aging', cust: 'Customer Name', line: 'Product line', subj: 'Subject', owner: 'Case Owner' })
+    .filter(r => r.id).map(r => Object.assign(r, { y: num(r.y), mo: num(r.mo), age: num(r.age), rk: personKey(r.owner) }));
 }
 
 function parseRma(wb) {
@@ -587,7 +621,7 @@ function setupExec(){
   if(!BOUND) $('#eY').addEventListener('change',()=>{EY=+$('#eY').value; try{localStorage.setItem('execYear',EY)}catch(e){} renderExec();});
 }
 function renderExec(){
-  const {CLS,PH}=L(), P=DB.projects, Y=EY, latest=projYears()[0];
+  const {CLS,PH}=LB(), P=DB.projects, Y=EY, latest=projYears()[0];
   const created=P.filter(p=>p.yr===Y);
   $('#lifeTitle').textContent=t('createdIn',{y:Y});
   $('#lifeTotal').textContent=fmt(created.length);
@@ -610,7 +644,7 @@ function renderExec(){
   $('#lifeBar').setAttribute('aria-label',segs.map(([k])=>`${name(k)}: ${by[k]||0}`).join(', '));
   $('#lifeLegend').innerHTML=segs.filter(([k])=>by[k]||Y===latest).map(([k,c])=>`<div class="it" style="--c:var(${c})"><div class="n">${fmt(by[k]||0)}</div><div class="l">${esc(name(k))}</div></div>`).join('');
 
-  const ML=L().MES, cc=DB.callCenter.filter(r=>r.mes&&r.mes.startsWith(String(Y)));
+  const ML=LB().MES, cc=DB.callCenter.filter(r=>r.mes&&r.mes.startsWith(String(Y)));
   const tickets=cc.reduce((a,r)=>a+(r.tot||0),0);
   const R=DB.rma, rY=R.filter(r=>r.y===Y), rP=R.filter(r=>r.y===Y-1);
   const openY=rY.filter(r=>r.st==='Open'), old=openY.filter(r=>r.dur==='> 30 dias').length;
@@ -641,14 +675,14 @@ function setupProj(){
   const rows=projRows();
   const fill=(sel,vals,map)=>{const keep=sel.value;sel.length=1;[...new Set(vals)].filter(Boolean).sort().forEach(v=>sel.insertAdjacentHTML('beforeend',`<option value="${esc(v)}">${esc(map?map[v]||v:v)}</option>`));sel.value=[...sel.options].some(o=>o.value===keep)?keep:''};
   const ky=$('#fY').value; $('#fY').length=1; [...new Set(rows.map(r=>r.yr).filter(Boolean))].sort((a,b)=>b-a).forEach(y=>$('#fY').insertAdjacentHTML('beforeend',`<option value="${y}">${y}</option>`)); $('#fY').value=[...$('#fY').options].some(o=>o.value===ky)?ky:'';
-  fill($('#fT'),rows.map(r=>r.t)); fill($('#fL'),rows.map(r=>r.l),L().LVL); fill($('#fP'),rows.map(r=>r.ph),L().PH); fill($('#fI'),rows.map(r=>r.ind));
+  fill($('#fT'),rows.map(r=>r.t)); fill($('#fL'),rows.map(r=>r.l),LB().LVL); fill($('#fP'),rows.map(r=>r.ph),LB().PH); fill($('#fI'),rows.map(r=>r.ind));
   if(BOUND) return;
   $('#fS').addEventListener('change',()=>{setupProj();renderProj();});
   ['#fY','#fT','#fL','#fP','#fI'].forEach(s=>$(s).addEventListener('change',renderProj)); $('#fQ').addEventListener('input',renderProj);
   $$('#tProj th').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;pSort={k,d:pSort.k===k?-pSort.d:(k==='amt'?-1:1)};renderProj();}));
 }
 function renderProj(){
-  const {CLS,LVL,PH}=L();
+  const {CLS,LVL,PH}=LB();
   const q=$('#fQ').value.toLowerCase();
   const all=$('#fS').value==='all', fy=+$('#fY').value||0;
   const rows=projRows().filter(r=>(!fy||r.yr===fy)&&(!$('#fT').value||r.t===$('#fT').value)&&(!$('#fL').value||r.l===$('#fL').value)&&(!$('#fP').value||r.ph===$('#fP').value)&&(!$('#fI').value||r.ind===$('#fI').value)
@@ -670,32 +704,50 @@ function renderProj(){
 }
 
 /* ===== Suporte ===== */
-let sPer=13;
+let sPer=8;
+function supYears(){
+  const ys=new Set(); DB.callCenter.forEach(r=>r.mes&&ys.add(+r.mes.slice(0,4))); DB.support.forEach(s=>s.yr&&ys.add(s.yr)); (DB.itrs||[]).forEach(r=>r.y&&ys.add(r.y));
+  return [...ys].sort((a,b)=>b-a);
+}
+function setupSup(){
+  const ys=supYears(), ky=+$('#sY').value, def=Math.max(0,...DB.support.map(s=>s.yr||0))||ys[0];
+  $('#sY').innerHTML=ys.map(y=>`<option value="${y}">${y}</option>`).join(''); $('#sY').value=ys.includes(ky)?ky:def;
+  /* responsáveis: nomes da aba Technical Support (a forma mais usada de cada pessoa) */
+  const kr=$('#sR').value, names={};
+  DB.support.forEach(s=>{if(!s.rk)return; const n=names[s.rk]||(names[s.rk]={}); n[s.resp]=(n[s.resp]||0)+1;});
+  const opts=Object.keys(names).map(k=>[k,Object.entries(names[k]).sort((a,b)=>b[1]-a[1])[0][0]]).sort((a,b)=>a[1].localeCompare(b[1]));
+  $('#sR').length=1; opts.forEach(([k,n])=>$('#sR').insertAdjacentHTML('beforeend',`<option value="${esc(k)}">${esc(n)}</option>`));
+  $('#sR').value=opts.some(o=>o[0]===kr)?kr:'';
+  if(!BOUND) ['#sY','#sR'].forEach(x=>$(x).addEventListener('change',renderSup));
+}
 function renderSup(){
-  const {MES:ML,ST}=L();
-  const CC=DB.callCenter.filter(r=>r.mes), lab=CC.map(r=>{const[y,m]=r.mes.split('-');return ML[+m-1]+'/'+y.slice(2)});
-  const y26=CC.filter(r=>r.mes.startsWith('2026')), tot=y26.reduce((a,r)=>a+r.tot,0);
-  const S=DB.support, open=S.filter(s=>s.st!=='Closed'), withItr=S.filter(s=>s.itr);
-  const maxW=Math.max(...S.map(s=>s.wo||0)), closedWk=S.filter(s=>s.st==='Closed'&&s.wc===maxW).length;
-  const I=DB.itrs, iy=I&&I.length?Math.max(...I.map(r=>r.y||0)):null, iCur=I?I.filter(r=>r.y===iy):[], iOpen=iCur.filter(r=>r.st&&r.st!=='Closed');
-  const kp=[[fmt(tot),t('kCC'),''],
-    [fmt(S.length),t('kEng'),t('kEngD',{n:fmt(withItr.length),w:maxW,c:fmt(closedWk)})]];
-  if(I) kp.push([fmt(iCur.length),t('kItr',{y:iy}),t('kItrD',{n:fmt(iOpen.length)})]);
-  kp.push([fmt(open.length),t('kOpenWait'),'']);
+  const {MES:ML,ST}=LB(), Y=+$('#sY').value, RK=$('#sR').value;
+  $('#sNote').hidden=!RK;
+  /* call center: filtra só por ano (a planilha não tem responsável) */
+  const CC=DB.callCenter.filter(r=>r.mes&&+r.mes.slice(0,4)===Y), lab=CC.map(r=>ML[+r.mes.slice(5,7)-1]);
+  const tot=CC.reduce((a,r)=>a+(r.tot||0),0);
+  const SY=DB.support.filter(s=>s.yr===Y), S=SY.filter(s=>!RK||s.rk===RK);
+  const open=S.filter(s=>s.st!=='Closed'), withItr=S.filter(s=>s.itr);
+  const maxW=Math.max(0,...SY.map(s=>s.wo||0)), closedWk=S.filter(s=>s.st==='Closed'&&s.wc===maxW).length;
+  const I=DB.itrs, iCur=I?I.filter(r=>r.y===Y&&(!RK||r.rk===RK)):[], iOpen=iCur.filter(r=>r.st&&r.st!=='Closed');
+  const kp=[CC.length?[fmt(tot),t('kCCY',{y:Y}),'']:['–',t('kCCY',{y:Y}),t('noDataY')],
+    SY.length?[fmt(S.length),t('kEngY',{y:Y}),t('kEngD',{n:fmt(withItr.length),w:maxW,c:fmt(closedWk)})]:['–',t('kEngY',{y:Y}),t('noDataY')]];
+  if(I) kp.push([fmt(iCur.length),t('kItr',{y:Y}),t('kItrD',{n:fmt(iOpen.length)})]);
+  kp.push([SY.length?fmt(open.length):'–',t('kOpenWait'),'']);
   $('#sKpis').className='grid '+(kp.length===4?'g4':'g3');
   $('#sKpis').innerHTML=kp.map(([n,l,d])=>`<div class="panel kpi"><div class="n">${n}</div><div class="l">${l}</div>${d?`<div class="d">${d}</div>`:''}</div>`).join('');
   chart('cCC',{type:'bar',data:{labels:lab,datasets:[{label:t('dsSupport'),data:CC.map(r=>r.tot-(r.rma||0)),backgroundColor:css('--s1')},{label:'RMA',data:CC.map(r=>r.rma||0),backgroundColor:css('--s2')}]},options:baseOpts({scales:{x:{stacked:true,ticks:{color:css('--muted')},grid:{display:false}},y:{stacked:true,ticks:{color:css('--muted')},grid:{color:css('--line')}}}})});
   chart('cCh',{type:'line',data:{labels:lab,datasets:[['WhatsApp','wpp','--s3'],[t('chPortal'),'sup','--s1'],[t('chCalls'),'lig','--s4'],[t('chRma'),'rma','--s2']].map(([l,k,c])=>({label:l,data:CC.map(r=>r[k]||0),borderColor:css(c),backgroundColor:css(c),tension:.25,pointRadius:2}))},options:baseOpts({plugins:{legend:{labels:{color:css('--muted'),boxWidth:12}},vl:{off:true}}})});
-  const wk=[];for(let w=Math.max(1,maxW-11);w<=maxW;w++)wk.push(w);
+  const wk=[];if(maxW)for(let w=Math.max(1,maxW-11);w<=maxW;w++)wk.push(w);
   chart('cWk',{type:'bar',data:{labels:wk.map(w=>t('wkPrefix')+w),datasets:[{label:t('dsOpened'),data:wk.map(w=>S.filter(s=>s.wo===w).length),backgroundColor:css('--s2')},{label:t('dsClosed'),data:wk.map(w=>S.filter(s=>s.st==='Closed'&&s.wc===w).length),backgroundColor:css('--s1')}]},options:baseOpts()});
   const per=S.filter(s=>!sPer||(s.wo||0)>maxW-sPer), pc=count(per,s=>s.cat||'(Not specified)'), pk=Object.keys(pc).sort((a,b)=>pc[b]-pc[a]);
   chart('cProd',{type:'bar',data:{labels:pk,datasets:[{label:'Issues',data:pk.map(k=>pc[k]),backgroundColor:css('--s1')}]},options:baseOpts({indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:css('--muted')},grid:{color:css('--line')}},y:{ticks:{color:css('--muted')},grid:{display:false}}}})});
   paged('tOpen',open.sort((a,b)=>(a.wo||0)-(b.wo||0)).map(s=>`<tr><td>${esc(s.cust)}</td><td>${esc(s.prod||s.cat)}</td><td>${esc(s.resp)}</td><td>${s.itr?esc(s.itr):'–'}</td><td><span class="pill ${/^resolved/i.test(s.rs||'')?'ok':/waiting|holding/i.test((s.rs||'')+s.st)?'md':'hi'}">${esc(ST[s.rs]||s.rs||s.st)}</span></td><td class="num">${s.wo??'–'}</td></tr>`),`<tr><td colspan="6">${t('noOpen')}</td></tr>`);
 
-  /* ITRs da base da HQ */
+  /* ITRs da base da HQ, no ano e responsável escolhidos */
   $('#itrBlock').hidden=!I;
   if(!I) return;
-  $('#itrYearLbl').textContent=String(iy);
+  $('#itrYearLbl').textContent=String(Y);
   const lastMo=Math.max(0,...iCur.map(r=>r.mo||0)), mos=[];for(let m=1;m<=lastMo;m++)mos.push(m);
   const PTS='Product Technical Support';
   chart('cItr',{type:'bar',data:{labels:mos.map(m=>ML[m-1]),datasets:[
@@ -703,8 +755,7 @@ function renderSup(){
       {label:t('dsOtherTypes'),data:mos.map(m=>iCur.filter(r=>r.mo===m&&r.type!==PTS).length),backgroundColor:css('--s4')}]},
     options:baseOpts({scales:{x:{stacked:true,ticks:{color:css('--muted')},grid:{display:false}},y:{stacked:true,ticks:{color:css('--muted')},grid:{color:css('--line')}}},
       plugins:{legend:{labels:{color:css('--muted'),boxWidth:12}},tooltip:{callbacks:{footer:it=>t('total')+': '+fmt(it.reduce((a,x)=>a+x.raw,0))}}}})});
-  const io=I.filter(r=>r.st&&r.st!=='Closed').sort((a,b)=>(b.age||0)-(a.age||0));
-  paged('tItr',io.map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.cust)}</td><td>${esc(r.line)}</td><td><span class="pill md">${esc(r.st)}</span></td><td class="num">${fmt(r.age)}</td></tr>`),`<tr><td colspan="5">${t('noItrOpen')}</td></tr>`);
+  paged('tItr',iOpen.sort((a,b)=>(b.age||0)-(a.age||0)).map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.cust)}</td><td>${esc(r.line)}</td><td><span class="pill md">${esc(r.st)}</span></td><td class="num">${fmt(r.age)}</td></tr>`),`<tr><td colspan="5">${t('noItrOpen')}</td></tr>`);
 }
 
 /* ===== RMA ===== */
@@ -716,7 +767,7 @@ function setupRma(){
   if(!BOUND) ['#rY','#rS','#rW'].forEach(s=>$(s).addEventListener('change',renderRma));
 }
 function renderRma(){
-  const {MES:ML,RG}=L();
+  const {MES:ML,RG}=LB();
   const Y=+$('#rY').value, sc=$('#rS').value, w=$('#rW').value;
   const base=DB.rma.filter(r=>(!sc||r.sc===sc)&&(!w||r.w===w));
   const cur=base.filter(r=>r.y===Y), prev=base.filter(r=>r.y===Y-1), open=cur.filter(r=>r.st==='Open');
@@ -732,9 +783,59 @@ function renderRma(){
   chart('cAge',{type:'bar',data:{labels:[t('age1'),t('age2'),t('age3')],datasets:[['IW','--s1'],['OOW','--s2']].map(([k,c])=>({label:k,data:ag.map(a=>open.filter(r=>r.dur===a&&r.w===k).length),backgroundColor:css(c)}))},options:baseOpts()});
   const rg=count(cur,r=>r.reg), rk=Object.keys(rg).sort((a,b)=>rg[b]-rg[a]);
   chart('cReg',{type:'bar',data:{labels:rk.map(k=>RG[k]||k),datasets:[{label:'RMAs',data:rk.map(k=>rg[k]),backgroundColor:css('--s3')}]},options:baseOpts({indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:css('--muted')},grid:{color:css('--line')}},y:{ticks:{color:css('--muted')},grid:{display:false}}}})});
+  renderMap(cur,open,Y);
   const md=count(cur,r=>r.model), mk=Object.keys(md).sort((a,b)=>md[b]-md[a]).slice(0,10);
   paged('tModel',mk.map(m=>`<tr><td>${esc(m)}</td><td class="num">${fmt(md[m])}</td><td class="num">${fmt(open.filter(r=>r.model===m).length)}</td></tr>`),'');
 }
+
+/* ===== Mapa de RMAs por estado (Leaflet + contornos dos estados em brazil-states.geojson) ===== */
+const UF_NAME={AC:'Acre',AL:'Alagoas',AM:'Amazonas',AP:'Amapá',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MG:'Minas Gerais',MS:'Mato Grosso do Sul',MT:'Mato Grosso',PA:'Pará',PB:'Paraíba',PE:'Pernambuco',PI:'Piauí',PR:'Paraná',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RO:'Rondônia',RR:'Roraima',RS:'Rio Grande do Sul',SC:'Santa Catarina',SE:'Sergipe',SP:'São Paulo',TO:'Tocantins'};
+let MAP=null, MAPGEO=null, MAPLAYER=null, MAPTILES=null, MAPTHEME='', mapMode='all', MAPARGS=null, geoLoading=null;
+function isDark(){ const a=document.documentElement.getAttribute('data-theme'); return a?a==='dark':matchMedia('(prefers-color-scheme: dark)').matches; }
+function loadGeo(){ return geoLoading||(geoLoading=fetch('brazil-states.geojson').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})); }
+function renderMap(cur,open,Y){
+  MAPARGS=[cur,open,Y];
+  if(typeof window.L==='undefined'||!window.L.map){ $('#mapPanel').hidden=true; return; }
+  const LL=window.L;
+  if(!MAP){
+    MAP=LL.map('rMap',{zoomSnap:0.25,scrollWheelZoom:false,attributionControl:true}).setView([-14.5,-52],4);
+    MAP.attributionControl.setPrefix(false);
+  }
+  const theme=isDark()?'dark':'light';
+  if(theme!==MAPTHEME){
+    if(MAPTILES) MAP.removeLayer(MAPTILES);
+    MAPTILES=LL.tileLayer(`https://{s}.basemaps.cartocdn.com/${theme==='dark'?'dark_nolabels':'light_nolabels'}/{z}/{x}/{y}{r}.png`,
+      {subdomains:'abcd',maxZoom:10,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'}).addTo(MAP);
+    MAPTHEME=theme;
+  }
+  setTimeout(()=>{ MAP.invalidateSize(); if(MAPLAYER&&!MAP._fitted){ MAP.fitBounds(MAPLAYER.getBounds(),{padding:[8,8]}); MAP._fitted=true; } },0);
+  loadGeo().then(geo=>{ MAPGEO=geo; drawMap(); }).catch(()=>{ $('#ufNote').textContent=t('mapFail'); });
+}
+function drawMap(){
+  if(!MAPGEO||!MAPARGS) return;
+  const LL=window.L, [cur,open,Y]=MAPARGS, src=mapMode==='open'?open:cur;
+  const by={}; src.forEach(r=>{ if(!r.uf) return; const u=String(r.uf).toUpperCase(); const o=by[u]||(by[u]={n:0,iw:0,oow:0,op:0}); o.n++; if(r.w==='IW')o.iw++; else if(r.w==='OOW')o.oow++; if(r.st==='Open')o.op++; });
+  const max=Math.max(0,...Object.values(by).map(o=>o.n));
+  /* 5 faixas em escala logarítmica: SP concentra a maioria e esmagaria a escala linear */
+  const steps=max?[1,2,3,4,5].map(i=>Math.max(1,Math.round(Math.exp(Math.log(max)*i/5)))):[];
+  const band=n=>!n?-1:steps.findIndex(s=>n<=s);
+  const op=[.22,.38,.55,.72,.9], blue=css('--s1'), line=css('--panel'), none=css('--line');
+  const style=f=>{const n=(by[f.properties.sigla]||{}).n||0, b=band(n); return {color:line,weight:1,fillColor:b<0?none:blue,fillOpacity:b<0?.35:op[b]};};
+  if(MAPLAYER) MAP.removeLayer(MAPLAYER);
+  MAPLAYER=LL.geoJSON(MAPGEO,{style,onEachFeature:(f,l)=>{
+    const u=f.properties.sigla, o=by[u];
+    l.bindTooltip(`<div class="maptip"><b>${u} – ${esc(UF_NAME[u]||f.properties.name)}</b><br>${o?`${t('mapTipN',{n:fmt(o.n)})}<br>IW ${fmt(o.iw)} · OOW ${fmt(o.oow)}${mapMode==='all'?' · '+t('mapTipOpen',{n:fmt(o.op)}):''}`:t('mapTipNone')}</div>`,{sticky:true});
+    l.on({mouseover:e=>e.target.setStyle({weight:2.5,color:css('--ink')}),mouseout:e=>MAPLAYER.resetStyle(e.target)});
+  }}).addTo(MAP);
+  if(!MAP._fitted){ MAP.fitBounds(MAPLAYER.getBounds(),{padding:[8,8]}); MAP._fitted=true; }
+  $('#mapSub').textContent=String(Y)+(mapMode==='open'?' · '+t('mapOpen').toLowerCase():'');
+  $('#mapLegend').innerHTML=steps.length?`<span>${t('mapScale')}</span>`+steps.map((s,i)=>`<i style="background:${blue};opacity:${op[i]}"></i><span>${i===0?'1':fmt((steps[i-1]||0)+1)}–${fmt(s)}</span>`).filter((x,i)=>i===0||steps[i]>steps[i-1]).join(''):'';
+  const rank=Object.entries(by).sort((a,b)=>b[1].n-a[1].n), tot=src.length, noUf=src.filter(r=>!r.uf).length;
+  $('#ufRank').innerHTML=rank.slice(0,10).map(([u,o])=>`<li data-uf="${u}"><b>${u}</b><span class="bar"><span style="width:${(o.n/max*100).toFixed(1)}%"></span></span><em>${fmt(o.n)} · ${Math.round(o.n/tot*100)}%</em></li>`).join('')||`<li>${t('mapNoData')}</li>`;
+  $('#ufNote').textContent=(rank.length>10?t('mapMore',{n:rank.length-10})+' ':'')+(noUf?t('mapNoUf',{n:fmt(noUf)}):'');
+}
+$('#ufRank').addEventListener('click',e=>{const li=e.target.closest('li[data-uf]'); if(!li||!MAPLAYER) return; MAPLAYER.eachLayer(l=>{ if(l.feature.properties.sigla===li.dataset.uf){ MAP.fitBounds(l.getBounds(),{maxZoom:6}); l.openTooltip(l.getBounds().getCenter()); } });});
+$$('#mapMode .chip').forEach(c=>c.addEventListener('click',()=>{mapMode=c.dataset.m;$$('#mapMode .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));drawMap();}));
 
 /* ===== Riscos ===== */
 function renderHot(){ paged('tHot',rp('hotRisks').map(h=>`<tr><td><strong>${esc(h.cliente)}</strong></td><td>${esc(h.tema)}</td><td>${esc(h.info)}</td></tr>`),''); }
@@ -801,7 +902,7 @@ async function refresh(first){
   try{
     const d=await loadData(); DB=d.db; REP=d.rep; LOAD=d;
     renderMeta();
-    setupExec(); setupProj(); setupRma(); setupRisk(); BOUND=true;
+    setupExec(); setupProj(); setupSup(); setupRma(); setupRisk(); BOUND=true;
     gateState=null; gate.hidden=true; app.hidden=false; $('#acts').hidden=false;
     if(first){let tb='exec'; try{tb=localStorage.getItem('tab')||'exec'}catch(e){} show(renders[tb]?tb:'exec');} else rerender();
   }catch(e){
