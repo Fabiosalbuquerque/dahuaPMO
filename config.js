@@ -18,6 +18,10 @@ window.DASH_CONFIG = {
     riscos: 'Project.?Database'            // aba que começa com "RAT"
   },
 
+  // Chave dos mapas de fundo da CARTO (carto.com/basemaps/apikey). Vai na URL de cada imagem do mapa,
+  // então é pública por natureza; o limite de uso fica atrelado a ela.
+  cartoKey: 'cb1_4jc3_1_a04365c9525a22a24b91dee0',
+
   // Recarrega os dados sozinho a cada N minutos (0 desliga)
   refreshMinutes: 10
 };

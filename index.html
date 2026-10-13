@@ -804,7 +804,7 @@ function renderMap(cur,open,Y){
   const theme=isDark()?'dark':'light';
   if(theme!==MAPTHEME){
     if(MAPTILES) MAP.removeLayer(MAPTILES);
-    MAPTILES=LL.tileLayer(`https://{s}.basemaps.cartocdn.com/${theme==='dark'?'dark_nolabels':'light_nolabels'}/{z}/{x}/{y}{r}.png`,
+    MAPTILES=LL.tileLayer(`https://{s}.basemaps.cartocdn.com/${theme==='dark'?'dark_nolabels':'light_nolabels'}/{z}/{x}/{y}{r}.png`+(CFG.cartoKey?'?key='+encodeURIComponent(CFG.cartoKey):''),
       {subdomains:'abcd',maxZoom:10,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'}).addTo(MAP);
     MAPTHEME=theme;
   }
