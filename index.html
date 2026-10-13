@@ -36,7 +36,14 @@ h1,h2,h3{font-family:var(--cond);font-weight:600;line-height:1.15;margin:0}
 header.top{border-bottom:1px solid var(--line);background:var(--panel)}
 .top .wrap{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding-top:18px;padding-bottom:14px}
 .top h1{font-size:30px;letter-spacing:.2px}
-.top h1 .tag{display:inline-block;width:10px;height:22px;background:var(--brand);margin-right:10px;vertical-align:-2px}
+.top h1{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{height:36px;width:auto;display:block}
+.logo-white{display:none}
+.top h1 .ttl{padding-left:14px;border-left:1px solid var(--line)}
+.prefs{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-bottom:6px}
+.prefs .langs,.prefs .styles{display:inline-flex;gap:4px;margin:0}
+.logo-foot{display:none}
+@media (max-width:640px){.logo{height:28px}.top h1{font-size:24px}.top h1 .ttl{padding-left:0;border-left:0}}
 .top .meta{color:var(--muted);font-size:14px;text-align:right}
 .top .meta strong{color:var(--ink);font-weight:600}
 nav.tabs{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
@@ -106,6 +113,7 @@ select,input[type=search]{font:15px var(--body);color:var(--ink);background:var(
 .ufrank .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;gap:0}
 .ufrank .bar span{display:block;height:100%;background:var(--s1)}
 .ufrank em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted)}
+.uflbl{font:700 12px/16px var(--cond);color:var(--ink);text-align:center;text-shadow:0 0 3px var(--panel),0 0 3px var(--panel),0 0 2px var(--panel);pointer-events:none;white-space:nowrap}
 .maptip b{font-family:var(--cond);font-size:15px}
 .yearsel{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-left:auto}
 .yearsel select{min-width:0}
@@ -115,10 +123,15 @@ td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 tr.exp td.detail{color:var(--muted);font-size:13px}
 .count{color:var(--muted);font-size:13px;margin:8px 0 0}
+.pill.tag{color:var(--s1);margin-left:6px;font-size:11px;vertical-align:1px}
+.mjd{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 20px;padding:4px 0 8px;color:var(--ink)}
+.mjd h4{margin:0 0 4px;font:600 14px var(--cond);color:var(--muted)}
+.mjd p{margin:0;white-space:pre-line;font-size:13px;line-height:1.45}
+.mjd ul{margin:0;padding-left:16px;font-size:13px}
 td .pill{white-space:normal;line-height:1.3;display:inline-block}
 #tOpen td:nth-child(1),#tOpen td:nth-child(2){max-width:130px}
 #tItr td:nth-child(2),#tItr td:nth-child(3){max-width:170px}
-#tOpen td:nth-child(4),#tItr td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+#tItr td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums}
 .sup{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
 .sup b{font:700 20px/1.2 var(--cond)}
 .acts{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
@@ -131,15 +144,63 @@ td .pill{white-space:normal;line-height:1.3;display:inline-block}
 .langs{display:inline-flex;gap:4px;margin-bottom:6px}
 .chip.sm{padding:2px 9px;font-size:13px}
 footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding:16px 0}
+/* logo com texto branco no tema escuro */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo-navy{display:none}:root:not([data-theme="light"]) .logo-white{display:block}}
+:root[data-theme="dark"] .logo-navy{display:none}
+:root[data-theme="dark"] .logo-white{display:block}
+
+/* ===== Estilo "Relatório D&S": mesma identidade do PPT semanal ===== */
+:root[data-style="report"]{
+  --bg:#DCE6F2; --panel:#FFFFFF; --panel2:#EEF3F9; --line:#C9D6E6; --ink:#0C2340; --muted:#4A5F7A;
+  --brand:#C8102E; --s1:#155F82; --s2:#E97132; --s3:#196B24; --s4:#0F9ED5; --warn:#B7791F; --ok:#2F855A;
+  --navy:#0C2340; --navy2:#0A1B30; --accent:#8FB4E3;
+  --body:"Aptos","Segoe UI",Calibri,Arial,sans-serif;
+  --cond:"Aptos Narrow","Aptos","Arial Narrow","Segoe UI",sans-serif;
+}
+[data-style="report"] header.top{background:var(--navy);border-bottom:0}
+[data-style="report"] .logo-navy{display:none}
+[data-style="report"] .logo-white{display:block}
+[data-style="report"] .top h1{color:#fff;text-transform:uppercase;font-weight:700;font-size:28px;letter-spacing:.01em}
+[data-style="report"] .top h1 .ttl{border-left-color:#2B4A70}
+[data-style="report"] .top .meta{color:#B9C9DE}
+[data-style="report"] .top .meta strong{color:var(--accent)}
+[data-style="report"] .top .chip{background:transparent;color:#B9C9DE;border-color:#2B4A70}
+[data-style="report"] .top .chip[aria-pressed="true"]{color:#fff;border-color:var(--accent);background:#17365C}
+[data-style="report"] nav.tabs{background:var(--navy2);border-bottom:0}
+[data-style="report"] nav.tabs button{color:#B9C9DE;text-transform:uppercase;font:700 14px var(--cond);letter-spacing:.03em}
+[data-style="report"] nav.tabs button[aria-selected="true"]{color:#fff;border-bottom-color:var(--accent)}
+[data-style="report"] .panel,[data-style="report"] .life{border:0;border-radius:14px;box-shadow:0 2px 8px rgba(12,35,64,.12)}
+[data-style="report"] .panel h2,[data-style="report"] .life h2{text-transform:uppercase;color:var(--navy);font-weight:700;font-size:17px;letter-spacing:.02em}
+[data-style="report"] .panel h2 small{text-transform:none;letter-spacing:0}
+[data-style="report"] .kpi{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px 14px}
+[data-style="report"] .kpi .l{order:-1;margin:0 0 6px;text-transform:uppercase;font:700 13px/1.25 var(--cond);color:var(--navy);letter-spacing:.02em}
+[data-style="report"] .kpi .n{color:var(--navy);font-size:42px}
+[data-style="report"] .kpi .d{color:var(--muted)}
+/* caixas escuras do topo do relatório: resumo, riscos e próximos passos */
+[data-style="report"] #v-exec .g3>.panel{background:var(--navy2);color:#E3EAF3;box-shadow:none}
+[data-style="report"] #v-exec .g3>.panel h2{color:#fff}
+[data-style="report"] #v-exec .g3>.panel li::marker{color:var(--accent)}
+[data-style="report"] #v-exec .g3>.panel .alert{border-top-color:rgba(255,255,255,.14)}
+[data-style="report"] #v-exec .g3>.panel .pill.hi{color:#FF7A7A}
+[data-style="report"] #v-exec .g3>.panel .pill.md{color:#F5B04A}
+[data-style="report"] th{color:var(--navy)}
+[data-style="report"] .tblwrap.paged thead th{background:var(--panel)}
+[data-style="report"] footer{background:var(--navy);color:#B9C9DE;border-top:0}
+[data-style="report"] footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+[data-style="report"] .logo-foot{display:block;height:28px;width:auto;flex:none}
+
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <h1><span class="tag" aria-hidden="true"></span><span data-i18n="title"></span></h1>
+    <h1><img class="logo logo-navy" src="logo-dahua-navy.png" alt="Dahua Technology" width="520" height="155"><img class="logo logo-white" src="logo-dahua-white.png" alt="Dahua Technology" width="520" height="155"><span class="ttl" data-i18n="title"></span></h1>
     <div class="meta">
-      <div class="langs" role="group" aria-label="Idioma / Language"><button class="chip sm" data-lang="pt" aria-pressed="true">PT</button><button class="chip sm" data-lang="en" aria-pressed="false">EN</button></div>
+      <div class="prefs">
+        <div class="styles" role="group" data-i18n-aria="styleAria"><button class="chip sm" data-style="panel" aria-pressed="true" data-i18n="stPanel"></button><button class="chip sm" data-style="report" aria-pressed="false" data-i18n="stReport"></button></div>
+        <div class="langs" role="group" aria-label="Idioma / Language"><button class="chip sm" data-lang="pt" aria-pressed="true">PT</button><button class="chip sm" data-lang="en" aria-pressed="false">EN</button></div>
+      </div>
       <span id="mWeek"></span><br><span id="mSrc"></span>
       <div class="acts" id="acts" hidden><span id="mUser"></span><button class="chip" id="bRefresh" data-i18n="refresh"></button><button class="chip" id="bOut" data-i18n="signOut"></button></div></div>
   </div>
@@ -174,8 +235,8 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 
 <section class="view" id="v-proj">
   <div class="filters">
-    <label><span data-i18n="fShow"></span><select id="fS"><option value="active" data-i18n="showActive"></option><option value="all" data-i18n="showAll"></option></select></label>
-    <label><span data-i18n="fYear"></span><select id="fY"><option value="" data-i18n="all"></option></select></label>
+    <label><span data-i18n="fShow"></span><select id="fS"><option value="active" data-i18n="showActive"></option><option value="all" data-i18n="showAll"></option><option value="major" data-i18n="showMajor"></option></select></label>
+    <label id="fYwrap"><span data-i18n="fYear"></span><select id="fY"><option value="" data-i18n="all"></option></select></label>
     <label><span data-i18n="fType"></span><select id="fT"><option value="" data-i18n="all"></option></select></label>
     <label><span data-i18n="fLevel"></span><select id="fL"><option value="" data-i18n="all"></option></select></label>
     <label><span data-i18n="fPhase"></span><select id="fP"><option value="" data-i18n="allF"></option></select></label>
@@ -185,10 +246,15 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   <div class="grid g4" id="pKpis"></div>
   <div class="grid g2 mt">
     <div class="panel"><h2><span data-i18n="hLevel"></span><small data-i18n="sLevel"></small></h2><div class="chart"><canvas id="cLevel"></canvas></div></div>
-    <div class="panel"><h2 data-i18n="hPhase"></h2><div class="chart"><canvas id="cPhase"></canvas></div></div>
+    <div class="panel"><h2 id="hPhaseT" data-i18n="hPhase"></h2><div class="chart"><canvas id="cPhase"></canvas></div></div>
   </div>
   <div class="panel mt"><h2><span data-i18n="hInd"></span><small data-i18n="sInd"></small></h2><div class="chart"><canvas id="cInd"></canvas></div></div>
-  <div class="panel mt"><h2 id="hProjTbl"></h2>
+  <div class="panel mt" id="pnlMajor" hidden><h2 data-i18n="hMajorTbl"></h2>
+    <div class="tblwrap paged"><table id="tMajor"><thead><tr>
+      <th data-k="nome" data-i18n="cProject"></th><th data-k="pm">Delivery PM</th><th data-k="l" data-i18n="cLevel"></th><th data-k="ph" data-i18n="cStage"></th><th data-k="amt" class="num" data-i18n="cValue"></th><th data-k="inc" class="num" data-i18n="cIncome"></th><th data-k="nc" class="num" data-i18n="cContracts"></th><th data-k="upd" data-i18n="cUpdated"></th>
+    </tr></thead><tbody></tbody></table></div><p class="count" data-i18n="mjClick"></p><p class="count" data-i18n="majorSrc"></p>
+  </div>
+  <div class="panel mt" id="pnlProj"><h2 id="hProjTbl"></h2>
     <div class="tblwrap paged"><table id="tProj"><thead><tr>
       <th data-k="nome" data-i18n="cProject"></th><th data-k="yr" class="num" data-i18n="fYear"></th><th data-k="pm">PM</th><th data-k="c" data-i18n="cClass"></th><th data-k="t" data-i18n="cType"></th><th data-k="l" data-i18n="cLevel"></th><th data-k="ph" data-i18n="cPhase"></th><th data-k="amt" class="num" data-i18n="cContract"></th>
     </tr></thead><tbody></tbody></table></div><p class="count" id="pCount"></p>
@@ -215,7 +281,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
         <button class="chip" data-p="0" aria-pressed="false" data-i18n="pYear"></button>
       </div>
       <div class="chart tall"><canvas id="cProd"></canvas></div></div>
-    <div class="panel"><h2 data-i18n="hOpen"></h2><div class="tblwrap paged"><table id="tOpen"><thead><tr><th data-i18n="cCustomer"></th><th data-i18n="cProduct"></th><th data-i18n="cResp"></th><th>ITR</th><th>Status</th><th class="num" data-i18n="cWk"></th></tr></thead><tbody></tbody></table></div></div>
+    <div class="panel"><h2 data-i18n="hOpen"></h2><div class="tblwrap paged"><table id="tOpen"><thead><tr><th data-i18n="cCustomer"></th><th data-i18n="cProduct"></th><th data-i18n="cResp"></th><th>Status</th><th class="num" data-i18n="cWk"></th></tr></thead><tbody></tbody></table></div></div>
   </div>
   <div class="grid g2 mt" id="itrBlock">
     <div class="panel"><h2><span data-i18n="hItrMonth"></span><small id="itrYearLbl"></small></h2><div class="chart tall"><canvas id="cItr"></canvas></div><p class="count" data-i18n="itrSrc"></p></div>
@@ -260,7 +326,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   </div>
 </section>
 </main>
-<footer><div class="wrap" id="foot"></div></footer>
+<footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
 <script src="config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -273,7 +339,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
    Valores que vêm das planilhas (nomes de projetos, clientes, títulos do RAT) aparecem como estão no Excel. */
 const I18N = {
 pt: {
-  title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções',
+  title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções', styleAria:'Estilo visual', stPanel:'Painel', stReport:'Relatório D&S',
   weekLine:'Semana <strong>{w}</strong>, report de <strong>{d}</strong>',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
   tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
@@ -289,7 +355,7 @@ pt: {
   errGeneric:'Não foi possível carregar os dados: {m}',
   created2026:'Projetos criados em 2026', createdIn:'Projetos criados em {y}', lifeTextPast:'{w} já em garantia e {a} ainda em andamento. A barra mostra a fase atual dos projetos importados em {y} (Import Year).',
   kTicketsY:'Tickets de suporte em {y}', kRmaCreatedY:'RMAs criados em {y}', kRmaPrevY:'{n} em todo o {y}', kRmaOpenY:'RMAs de {y} em aberto', noDataY:'Sem dados nesse ano', ccSince:'dados desde {m}',
-  fShow:'Mostrar', showActive:'Projetos ativos', showAll:'Todos os projetos', hProjTblAll:'Projetos', kAllProj:'Projetos', typeOthers:'Outros',
+  fShow:'Mostrar', showActive:'Projetos ativos', showAll:'Todos os projetos', showMajor:'Major Projects (Win)', kMajor:'Major Projects ganhos', kMajorVal:'Valor dos projetos', kMajorInc:'Receita realizada', kMajorCtr:'Contratos vinculados', kMajorCtrD:'em contratos na ProjectList', hMajorTbl:'Major Projects ganhos (Win)', cStage:'Estágio', cValue:'Valor (USD)', cIncome:'Receita (USD)', cContracts:'Contratos', cUpdated:'Atualização', hByPm:'Major Projects por Delivery PM', mjProg:'Último andamento', mjNext:'Próximo passo', mjRisk:'Risco', mjCtrs:'Contratos na ProjectList', mjNoCtr:'Nenhum contrato ligado a este código na ProjectList.', mjClick:'Clique numa linha para ver andamento, próximo passo, risco e contratos.', majorSrc:'Fonte: aba Major Projects, Project Status = Win. Valor = Project Amount (10K USD) × 10.000. Contratos ligados pelo código (Project Code = Opportunity Num).', majorTagT:'Contrato de um Major Project ganho', hProjTblAll:'Projetos', kAllProj:'Projetos', typeOthers:'Outros',
   pgInfo:'{a}–{b} de {n}', pgPrev:'Anterior', pgNext:'Próxima',
   lifeText:'{a} projetos ativos hoje e {w} já em garantia. A barra mostra onde está cada projeto acompanhado pelo escritório.',
   kTickets:'Tickets de suporte no ano', kLastMonth:'{n} em {m}', kRmaCreated:'RMAs criados em 2026', kRmaPrev:'{n} em todo o 2025',
@@ -316,7 +382,7 @@ pt: {
   tRisk:'Risco', tIssue:'Issue', agClosed:'Fechado', noProg:'Sem andamento registrado.', noRat:'Nenhum registro com esses filtros.', clickRow:'Clique numa linha para ver o andamento.'
 },
 en: {
-  title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections',
+  title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections', styleAria:'Visual style', stPanel:'Dashboard', stReport:'D&S report',
   weekLine:'Week <strong>{w}</strong>, report of <strong>{d}</strong>',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
   tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
@@ -332,7 +398,7 @@ en: {
   errGeneric:'Could not load the data: {m}',
   created2026:'Projects created in 2026', createdIn:'Projects created in {y}', lifeTextPast:'{w} already in warranty and {a} still ongoing. The bar shows the current phase of projects imported in {y} (Import Year).',
   kTicketsY:'Support tickets in {y}', kRmaCreatedY:'RMAs created in {y}', kRmaPrevY:'{n} in all of {y}', kRmaOpenY:'Open {y} RMAs', noDataY:'No data for this year', ccSince:'data since {m}',
-  fShow:'Show', showActive:'Active projects', showAll:'All projects', hProjTblAll:'Projects', kAllProj:'Projects', typeOthers:'Others',
+  fShow:'Show', showActive:'Active projects', showAll:'All projects', showMajor:'Major Projects (Win)', kMajor:'Major Projects won', kMajorVal:'Project value', kMajorInc:'Income to date', kMajorCtr:'Linked contracts', kMajorCtrD:'in ProjectList contracts', hMajorTbl:'Major Projects won (Win)', cStage:'Stage', cValue:'Value (USD)', cIncome:'Income (USD)', cContracts:'Contracts', cUpdated:'Last update', hByPm:'Major Projects by delivery PM', mjProg:'Latest progress', mjNext:'Next step', mjRisk:'Risk', mjCtrs:'ProjectList contracts', mjNoCtr:'No contract linked to this code in the ProjectList.', mjClick:'Click a row to see progress, next step, risk and contracts.', majorSrc:'Source: Major Projects sheet, Project Status = Win. Value = Project Amount (10K USD) × 10,000. Contracts linked by code (Project Code = Opportunity Num).', majorTagT:'Contract of a won Major Project', hProjTblAll:'Projects', kAllProj:'Projects', typeOthers:'Others',
   pgInfo:'{a}–{b} of {n}', pgPrev:'Previous', pgNext:'Next',
   lifeText:'{a} projects active today and {w} already in warranty. The bar shows where each project tracked by the PMO stands.',
   kTickets:'Support tickets this year', kLastMonth:'{n} in {m}', kRmaCreated:'RMAs created in 2026', kRmaPrev:'{n} in all of 2025',
@@ -361,13 +427,13 @@ en: {
 const LABELS = {
   pt: { MES:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
     CLS:{'2026 Project':'Em execução 2026','Project Backlog':'Backlog','Operation phase management':'Fase de operação','Warranty phase':'Garantia','Stock Project':'Estoque de material'},
-    LVL:{'HQ Level':'HQ','Regional Level':'Regional','Local Level':'Local','Under classification':'Em classificação'},
-    PH:{'Design phase':'Design','Start-Up':'Start-up','Project Approval':'Aprovação','Implementation':'Implantação','Warranty':'Garantia'},
+    LVL:{'HQ Level':'HQ','Regional Level':'Regional','Local Level':'Local','Under classification':'Em classificação','Company Level':'Empresa','Department Level':'Departamento'},
+    PH:{'Design phase':'Design','Start-Up':'Start-up','Project Approval':'Aprovação','Implementation':'Implantação','Warranty':'Garantia','Order & Delivery':'Pedido e entrega','Contract':'Contrato','Bidding':'Licitação','Quote':'Cotação','Solution Design':'Desenho da solução'},
     ST:{'Work in progress':'Em andamento','Waiting Customer Testing':'Aguardando teste do cliente','Holding':'Em espera'},
     RG:{'Southeast':'Sudeste','Northeast':'Nordeste','South':'Sul','Central-West':'Centro-Oeste','North':'Norte'} },
   en: { MES:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     CLS:{'2026 Project':'2026 in execution','Project Backlog':'Backlog','Operation phase management':'Operation phase','Warranty phase':'Warranty','Stock Project':'Material stock'},
-    LVL:{'HQ Level':'HQ','Regional Level':'Regional','Local Level':'Local','Under classification':'Under classification'},
+    LVL:{'HQ Level':'HQ','Regional Level':'Regional','Local Level':'Local','Under classification':'Under classification','Company Level':'Company','Department Level':'Department'},
     PH:{'Design phase':'Design','Start-Up':'Start-up','Project Approval':'Approval','Implementation':'Implementation','Warranty':'Warranty'},
     ST:{}, RG:{'Central-West':'Center-West'} }
 };
@@ -478,7 +544,7 @@ function mapRows(ws, mp) {
 }
 
 function parseProjetos(wb) {
-  const projects = mapRows(sheet(wb, 'ProjectList'), { id: 'Contract No', yr: 'Import Year', c: 'Report Classification', t: 'Project Type', l: 'Project Level', ph: 'Project Phase', n: 'Project Resumed Name', cn: 'Contract Name', pm: 'Local Project Manager', pm2: 'Project Manager', ind: 'Industry Line One', amt: 'Contract Amount(USD)', cust: 'Customer Of Party A', sign: 'Contract Sign Date' });
+  const projects = mapRows(sheet(wb, 'ProjectList'), { id: 'Contract No', yr: 'Import Year', c: 'Report Classification', t: 'Project Type', l: 'Project Level', ph: 'Project Phase', n: 'Project Resumed Name', cn: 'Contract Name', pm: 'Local Project Manager', pm2: 'Project Manager', ind: 'Industry Line One', amt: 'Contract Amount(USD)', cust: 'Customer Of Party A', sign: 'Contract Sign Date', opp: 'Opportunity Num' });
   projects.forEach(p => { p.yr = num(p.yr); p.amt = num(p.amt); });
   const support = mapRows(sheet(wb, 'Technical Support'), { itr: 'ITR Number', cust: 'Customer', cat: 'Product Category', resp: 'Dahua Brasil Responsible', st: 'Status', wo: 'Week Open', wc: 'Week Close', rs: 'Report Status', own: 'Owner Ticket', ag: 'Aging Bucket', prod: 'Product / Model', start: 'Start Time' })
     .filter(s => s.st || s.cust);
@@ -503,7 +569,20 @@ function parseProjetos(wb) {
     const r = rows[i] || []; if (!(r[c0] instanceof Date)) break;
     callCenter.push({ mes: iso(r[c0]), lig: num(r[c0 + 1]), wpp: num(r[c0 + 2]), sup: num(r[c0 + 3]), rma: num(r[c0 + 4]), tot: num(r[c0 + 5]) });
   }
-  return { projects, support, callCenter, itrs: parseItr(wb) };
+  return { projects, support, callCenter, itrs: parseItr(wb), major: parseMajor(wb) };
+}
+
+/* Aba "Major Projects": oportunidades acompanhadas. Status "Win" = oportunidade que virou projeto.
+   Liga com a ProjectList pelo código: Project Code (aqui) = Opportunity Num (lá). Opcional: sem a aba, a opção some. */
+function parseMajor(wb) {
+  const ws = wb.Sheets['Major Projects'];
+  if (!ws) return null;
+  return mapRows(ws, { code: 'Project Code', name: 'Project Name', level: 'Project Level', stage: 'Project Stage', status: 'Project Status',
+      amt10k: 'Project Amount(10K_USD)', inc: 'Total Income(USD)', pm: 'Delivery PM', pmA: 'Delivery PM\n(Assigned)', pmB: 'Delivery PM\n(To be assigned)',
+      ind: 'Primary Industry', itype: 'Industry Type', endUser: 'End User', partner: 'Partner Name', progDate: 'Project Latest Progress Date',
+      prog: 'Project Latest Progress', nextDate: 'Next Plan Date', next: 'Next Plan', risk: 'Project Risk' })
+    .filter(r => r.code || r.name)
+    .map(r => Object.assign(r, { amt10k: num(r.amt10k), inc: num(r.inc), pm: r.pm || r.pmA || r.pmB, status: r.status ? String(r.status).trim() : null }));
 }
 
 /* Aba "ITR database": export da base de ITRs da HQ. Opcional: se não existir, o bloco de ITR some. */
@@ -540,7 +619,7 @@ async function loadData() {
   const { items } = await listFolder(token);
   const fP = pickFile(items, 'projetos'), fR = pickFile(items, 'rma'), fK = pickFile(items, 'riscos');
   const [wP, wR, wK, rep] = await Promise.all([
-    readWorkbook(fP, token, ['ProjectList', 'Technical Support', 'Call Center', 'ITR database']),
+    readWorkbook(fP, token, ['ProjectList', 'Technical Support', 'Call Center', 'ITR database', 'Major Projects']),
     readWorkbook(fR, token, ['Database']),
     readWorkbook(fK, token),
     fetch('report.json', { cache: 'no-store' }).then(r => r.json())
@@ -582,11 +661,11 @@ function chart(id,cfg){ if(charts[id]) charts[id].destroy(); charts[id]=new Char
 function baseOpts(extra={}){
   const ink=css('--muted'), grid=css('--line');
   return Object.assign({responsive:true,maintainAspectRatio:false,animation:false,layout:{padding:{top:16,right:24}},locale:LOC(),
-    plugins:{legend:{labels:{color:ink,boxWidth:12,font:{family:Chart.defaults.font.family}}},tooltip:{titleFont:{family:'Barlow'},bodyFont:{family:'Barlow'}}},
-    scales:{x:{ticks:{color:ink,font:{family:Chart.defaults.font.family}},grid:{display:false}},y:{ticks:{color:ink,font:{family:Chart.defaults.font.family}},grid:{color:grid},beginAtZero:true}}},extra);
+    plugins:{legend:{labels:{color:ink,boxWidth:12,font:{family:Chart.defaults.font.family}}},tooltip:{titleFont:{family:Chart.defaults.font.family},bodyFont:{family:Chart.defaults.font.family}}},
+    scales:{x:{ticks:{color:ink,font:{family:Chart.defaults.font.family}},grid:{display:false}},y:{ticks:{color:ink,precision:0,font:{family:Chart.defaults.font.family}},grid:{color:grid},beginAtZero:true}}},extra);
 }
 /* rótulos de valor nas barras */
-const valueLabels={id:'vl',afterDatasetsDraw(c,_,o){ if(o&&o.off) return; const ctx=c.ctx; ctx.save(); ctx.font='600 12px Barlow'; ctx.fillStyle=css('--ink');
+const valueLabels={id:'vl',afterDatasetsDraw(c,_,o){ if(o&&o.off) return; const ctx=c.ctx; ctx.save(); ctx.font='600 12px '+Chart.defaults.font.family; ctx.fillStyle=css('--ink');
   c.data.datasets.forEach((ds,i)=>{const m=c.getDatasetMeta(i); if(m.hidden) return; m.data.forEach((el,j)=>{const v=ds.data[j]; if(!v) return;
     const hor=c.options.indexAxis==='y'; const stacked=c.options.scales?.x?.stacked;
     if(stacked){ctx.textAlign='center';ctx.textBaseline='middle';const p=el.getProps(['x','y','base']);const h=Math.abs(p.base-p.y);if(h<16)return;ctx.fillStyle='#fff';ctx.fillText(fmt(v),p.x,(p.y+p.base)/2);ctx.fillStyle=css('--ink');return;}
@@ -667,39 +746,70 @@ function renderExec(){
 
 /* ===== Projetos ===== */
 let pSort={k:'amt',d:-1};
+const winMajors=()=>(DB.major||[]).filter(m=>/^win$/i.test(m.status||''));
+function majorRows(){
+  return winMajors().map(m=>{
+    const ctr=DB.projects.filter(p=>p.opp&&p.opp===m.code);
+    return {nome:m.name, cust:m.endUser, pm:cleanName(m.pm), l:m.level, ph:m.stage, ind:m.ind,
+      t:m.itype==='TB'?'ToB':m.itype==='TG'?'ToG':m.itype, amt:m.amt10k!=null?m.amt10k*10000:null, inc:m.inc,
+      nc:ctr.length, ctr, upd:m.progDate, m};
+  });
+}
 function projRows(){
-  const all=$('#fS').value==='all';
-  return DB.projects.filter(p=>all||ACTIVE.includes(p.c)).map(p=>({...p,nome:p.n||p.cn,pm:cleanName(p.pm||p.pm2)}));
+  const mode=$('#fS').value;
+  if(mode==='major') return majorRows();
+  const wins=new Set(winMajors().map(m=>m.code));
+  return DB.projects.filter(p=>mode==='all'||ACTIVE.includes(p.c)).map(p=>({...p,nome:p.n||p.cn,pm:cleanName(p.pm||p.pm2),isMajor:!!(p.opp&&wins.has(p.opp))}));
 }
 function setupProj(){
   const rows=projRows();
   const fill=(sel,vals,map)=>{const keep=sel.value;sel.length=1;[...new Set(vals)].filter(Boolean).sort().forEach(v=>sel.insertAdjacentHTML('beforeend',`<option value="${esc(v)}">${esc(map?map[v]||v:v)}</option>`));sel.value=[...sel.options].some(o=>o.value===keep)?keep:''};
   const ky=$('#fY').value; $('#fY').length=1; [...new Set(rows.map(r=>r.yr).filter(Boolean))].sort((a,b)=>b-a).forEach(y=>$('#fY').insertAdjacentHTML('beforeend',`<option value="${y}">${y}</option>`)); $('#fY').value=[...$('#fY').options].some(o=>o.value===ky)?ky:'';
+  /* a opção Major Projects só aparece se a aba existir no arquivo */
+  $('#fS option[value=major]').hidden=!DB.major; if(!DB.major&&$('#fS').value==='major') $('#fS').value='active';
+  $('#fYwrap').hidden=$('#fS').value==='major';
   fill($('#fT'),rows.map(r=>r.t)); fill($('#fL'),rows.map(r=>r.l),LB().LVL); fill($('#fP'),rows.map(r=>r.ph),LB().PH); fill($('#fI'),rows.map(r=>r.ind));
   if(BOUND) return;
   $('#fS').addEventListener('change',()=>{setupProj();renderProj();});
   ['#fY','#fT','#fL','#fP','#fI'].forEach(s=>$(s).addEventListener('change',renderProj)); $('#fQ').addEventListener('input',renderProj);
   $$('#tProj th').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;pSort={k,d:pSort.k===k?-pSort.d:(k==='amt'?-1:1)};renderProj();}));
+  $$('#tMajor th').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;mSort={k,d:mSort.k===k?-mSort.d:(['amt','inc','nc','upd'].includes(k)?-1:1)};renderProj();}));
+  $('#tMajor tbody').addEventListener('click',e=>{const tr=e.target.closest('tr[data-code]');if(!tr)return;const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('exp')){nx.remove();return;}
+    const r=majorRows().find(x=>x.m.code===tr.dataset.code); if(!r) return; const {CLS}=LB();
+    const box=(h,body)=>`<div><h4>${h}</h4>${body}</div>`, txt=(d,v)=>v?`<p>${d?`<strong>${esc(fdate(d))}</strong>\n`:''}${esc(v)}</p>`:`<p>–</p>`;
+    const ctr=r.ctr.length?`<ul>${r.ctr.sort((a,b)=>(b.amt||0)-(a.amt||0)).map(c=>`<li>${esc(c.n||c.cn||c.id)} · ${esc(CLS[c.c]||c.c||'–')} · ${c.yr??'–'} · ${c.amt?usd(c.amt):'–'}</li>`).join('')}</ul>`:`<p>${t('mjNoCtr')}</p>`;
+    tr.insertAdjacentHTML('afterend',`<tr class="exp"><td colspan="8"><div class="mjd">${box(t('mjProg'),txt(r.m.progDate,r.m.prog))}${box(t('mjNext'),txt(r.m.nextDate,r.m.next))}${box(t('mjRisk'),txt(null,r.m.risk))}${box(t('mjCtrs')+` (${r.ctr.length})`,ctr)}</div></td></tr>`);});
 }
+let mSort={k:'amt',d:-1};
 function renderProj(){
   const {CLS,LVL,PH}=LB();
   const q=$('#fQ').value.toLowerCase();
-  const all=$('#fS').value==='all', fy=+$('#fY').value||0;
+  const mode=$('#fS').value, all=mode==='all', major=mode==='major', fy=major?0:(+$('#fY').value||0);
+  $('#fYwrap').hidden=major; $('#pnlMajor').hidden=!major; $('#pnlProj').hidden=major;
   const rows=projRows().filter(r=>(!fy||r.yr===fy)&&(!$('#fT').value||r.t===$('#fT').value)&&(!$('#fL').value||r.l===$('#fL').value)&&(!$('#fP').value||r.ph===$('#fP').value)&&(!$('#fI').value||r.ind===$('#fI').value)
     &&(!q||[r.nome,r.cn,r.pm,r.cust].some(v=>v&&String(v).toLowerCase().includes(q))));
   const sum=rows.reduce((a,r)=>a+(r.amt||0),0);
   $('#hProjTbl').textContent=t(all?'hProjTblAll':'hProjTbl');
-  $('#pKpis').innerHTML=[[fmt(rows.length),t(all?'kAllProj':'kCurProj')],[fmt(rows.filter(r=>r.t==='ToB').length),'ToB'],[fmt(rows.filter(r=>r.t==='ToG').length),'ToG'],[usd(sum),t('kContract')]]
-    .map(([n,l])=>`<div class="panel kpi"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
-  const lv=['HQ Level','Regional Level','Local Level','Under classification'];
+  const kp=major
+    ? [[fmt(rows.length),t('kMajor')],[usd(sum),t('kMajorVal')],[usd(rows.reduce((a,r)=>a+(r.inc||0),0)),t('kMajorInc')],[fmt(rows.reduce((a,r)=>a+r.nc,0)),t('kMajorCtr'),usd(rows.reduce((a,r)=>a+r.ctr.reduce((b,c)=>b+(c.amt||0),0),0))+' '+t('kMajorCtrD')]]
+    : [[fmt(rows.length),t(all?'kAllProj':'kCurProj')],[fmt(rows.filter(r=>r.t==='ToB').length),'ToB'],[fmt(rows.filter(r=>r.t==='ToG').length),'ToG'],[usd(sum),t('kContract')]];
+  $('#pKpis').innerHTML=kp.map(([n,l,d])=>`<div class="panel kpi"><div class="n">${n}</div><div class="l">${l}</div>${d?`<div class="d">${d}</div>`:''}</div>`).join('');
+  const lv=major?[...new Set(rows.map(r=>r.l).filter(Boolean))].sort():['HQ Level','Regional Level','Local Level','Under classification'];
   const tys=['ToB','ToG','Others'].filter(x=>rows.some(r=>r.t===x));
   chart('cLevel',{type:'bar',data:{labels:tys.map(x=>x==='Others'?t('typeOthers'):x),datasets:lv.map((l,i)=>({label:LVL[l],data:tys.map(x=>rows.filter(r=>r.t===x&&r.l===l).length),backgroundColor:css(['--s1','--s2','--s3','--s4'][i])}))},options:baseOpts()});
-  const ph=count(rows,r=>r.ph), phk=Object.keys(ph).sort((a,b)=>ph[b]-ph[a]);
-  chart('cPhase',{type:'bar',data:{labels:phk.map(k=>PH[k]||k),datasets:[{label:t('dsProjects'),data:phk.map(k=>ph[k]),backgroundColor:css('--s1')}]},options:baseOpts({plugins:{legend:{display:false}}})});
+  /* Major Projects: o 2º gráfico mostra a carteira por Delivery PM (todos estão em entrega, então a fase não diz muito) */
+  $('#hPhaseT').textContent=t(major?'hByPm':'hPhase');
+  const ph=count(rows,r=>major?(r.pm||t('notInformed')):r.ph), phk=Object.keys(ph).sort((a,b)=>ph[b]-ph[a]);
+  chart('cPhase',{type:'bar',data:{labels:phk.map(k=>major?k:(PH[k]||k)),datasets:[{label:t('dsProjects'),data:phk.map(k=>ph[k]),backgroundColor:css('--s1')}]},options:baseOpts({plugins:{legend:{display:false}}})});
   const ind={}; rows.forEach(r=>{const k=r.ind||t('notInformed');ind[k]=(ind[k]||0)+(r.amt||0)}); const ik=Object.keys(ind).sort((a,b)=>ind[b]-ind[a]);
   chart('cInd',{type:'bar',data:{labels:ik,datasets:[{label:'USD',data:ik.map(k=>ind[k]),backgroundColor:css('--s3')}]},options:baseOpts({indexAxis:'y',plugins:{legend:{display:false},vl:{money:true},tooltip:{callbacks:{label:c=>usd(c.raw)}}},scales:{x:{ticks:{color:css('--muted'),callback:v=>usd(v)},grid:{color:css('--line')}},y:{ticks:{color:css('--muted')},grid:{display:false}}}})});
+  if(major){
+    const {k,d}=mSort; rows.sort((a,b)=>{const x=a[k]??'',y=b[k]??'';return (typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y)))*d});
+    paged('tMajor',rows.map(r=>`<tr data-code="${esc(r.m.code)}" style="cursor:pointer"><td>${esc(r.nome)}${r.cust?`<br><span style="color:var(--muted);font-size:13px">${esc(r.cust)}</span>`:''}</td><td>${esc(r.pm||'–')}</td><td>${esc(LVL[r.l]||r.l||'–')}</td><td>${esc(PH[r.ph]||r.ph||'–')}</td><td class="num">${r.amt!=null?usd(r.amt):'–'}</td><td class="num">${r.inc?usd(r.inc):'–'}</td><td class="num">${fmt(r.nc)}</td><td>${fdate(r.upd)}</td></tr>`),`<tr><td colspan="8">${t('noProj')}</td></tr>`);
+    return;
+  }
   const {k,d}=pSort; rows.sort((a,b)=>{const x=a[k]??'',y=b[k]??'';return (typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y)))*d});
-  paged('tProj',rows.map(r=>`<tr><td>${esc(r.nome)}${r.cust?`<br><span style="color:var(--muted);font-size:13px">${esc(r.cust)}</span>`:''}</td><td class="num">${r.yr??'–'}</td><td>${esc(r.pm||'–')}</td><td>${esc(CLS[r.c]||r.c||'–')}</td><td>${esc(r.t)}</td><td>${esc(LVL[r.l]||r.l)}</td><td>${esc(PH[r.ph]||r.ph)}</td><td class="num">${r.amt?fmt(r.amt):'–'}</td></tr>`),`<tr><td colspan="8">${t('noProj')}</td></tr>`);
+  paged('tProj',rows.map(r=>`<tr><td>${esc(r.nome)}${r.isMajor?`<span class="pill tag" title="${esc(t('majorTagT'))}">Major</span>`:''}${r.cust?`<br><span style="color:var(--muted);font-size:13px">${esc(r.cust)}</span>`:''}</td><td class="num">${r.yr??'–'}</td><td>${esc(r.pm||'–')}</td><td>${esc(CLS[r.c]||r.c||'–')}</td><td>${esc(r.t)}</td><td>${esc(LVL[r.l]||r.l)}</td><td>${esc(PH[r.ph]||r.ph)}</td><td class="num">${r.amt?fmt(r.amt):'–'}</td></tr>`),`<tr><td colspan="8">${t('noProj')}</td></tr>`);
   $('#pCount').textContent=t('pCount',{n:rows.length});
 }
 
@@ -742,7 +852,7 @@ function renderSup(){
   chart('cWk',{type:'bar',data:{labels:wk.map(w=>t('wkPrefix')+w),datasets:[{label:t('dsOpened'),data:wk.map(w=>S.filter(s=>s.wo===w).length),backgroundColor:css('--s2')},{label:t('dsClosed'),data:wk.map(w=>S.filter(s=>s.st==='Closed'&&s.wc===w).length),backgroundColor:css('--s1')}]},options:baseOpts()});
   const per=S.filter(s=>!sPer||(s.wo||0)>maxW-sPer), pc=count(per,s=>s.cat||'(Not specified)'), pk=Object.keys(pc).sort((a,b)=>pc[b]-pc[a]);
   chart('cProd',{type:'bar',data:{labels:pk,datasets:[{label:'Issues',data:pk.map(k=>pc[k]),backgroundColor:css('--s1')}]},options:baseOpts({indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:css('--muted')},grid:{color:css('--line')}},y:{ticks:{color:css('--muted')},grid:{display:false}}}})});
-  paged('tOpen',open.sort((a,b)=>(a.wo||0)-(b.wo||0)).map(s=>`<tr><td>${esc(s.cust)}</td><td>${esc(s.prod||s.cat)}</td><td>${esc(s.resp)}</td><td>${s.itr?esc(s.itr):'–'}</td><td><span class="pill ${/^resolved/i.test(s.rs||'')?'ok':/waiting|holding/i.test((s.rs||'')+s.st)?'md':'hi'}">${esc(ST[s.rs]||s.rs||s.st)}</span></td><td class="num">${s.wo??'–'}</td></tr>`),`<tr><td colspan="6">${t('noOpen')}</td></tr>`);
+  paged('tOpen',open.sort((a,b)=>(a.wo||0)-(b.wo||0)).map(s=>`<tr><td>${esc(s.cust)}</td><td>${esc(s.prod||s.cat)}</td><td>${esc(s.resp)}</td><td><span class="pill ${/^resolved/i.test(s.rs||'')?'ok':/waiting|holding/i.test((s.rs||'')+s.st)?'md':'hi'}">${esc(ST[s.rs]||s.rs||s.st)}</span></td><td class="num">${s.wo??'–'}</td></tr>`),`<tr><td colspan="5">${t('noOpen')}</td></tr>`);
 
   /* ITRs da base da HQ, no ano e responsável escolhidos */
   $('#itrBlock').hidden=!I;
@@ -790,6 +900,9 @@ function renderRma(){
 
 /* ===== Mapa de RMAs por estado (Leaflet + contornos dos estados em brazil-states.geojson) ===== */
 const UF_NAME={AC:'Acre',AL:'Alagoas',AM:'Amazonas',AP:'Amapá',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MG:'Minas Gerais',MS:'Mato Grosso do Sul',MT:'Mato Grosso',PA:'Pará',PB:'Paraíba',PE:'Pernambuco',PI:'Piauí',PR:'Paraná',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RO:'Rondônia',RR:'Roraima',RS:'Rio Grande do Sul',SC:'Santa Catarina',SE:'Sergipe',SP:'São Paulo',TO:'Tocantins'};
+/* ponto do rótulo de cada estado (ajustado à mão: o centro do retângulo erra em estados de formato irregular e DF fica dentro de GO) */
+const UF_LBL={AC:[-9.0,-70.5],AL:[-9.6,-36.4],AM:[-4.2,-64.6],AP:[1.4,-51.8],BA:[-12.5,-41.7],CE:[-5.2,-39.5],DF:[-15.8,-47.75],ES:[-19.6,-40.5],GO:[-15.2,-50.4],MA:[-5.3,-45.3],MG:[-18.5,-44.5],MS:[-20.5,-54.8],MT:[-12.9,-55.9],PA:[-4.0,-52.5],PB:[-7.1,-36.4],PE:[-8.4,-38.0],PI:[-7.4,-42.6],PR:[-24.6,-51.6],RJ:[-22.3,-42.7],RN:[-5.75,-36.6],RO:[-10.8,-62.8],RR:[2.0,-61.3],RS:[-29.7,-53.3],SC:[-27.3,-50.4],SE:[-10.6,-37.4],SP:[-22.3,-48.6],TO:[-10.2,-48.3]};
+let MAPLBL=null;
 let MAP=null, MAPGEO=null, MAPLAYER=null, MAPTILES=null, MAPTHEME='', mapMode='all', MAPARGS=null, geoLoading=null;
 function isDark(){ const a=document.documentElement.getAttribute('data-theme'); return a?a==='dark':matchMedia('(prefers-color-scheme: dark)').matches; }
 function loadGeo(){ return geoLoading||(geoLoading=fetch('brazil-states.geojson').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})); }
@@ -828,6 +941,10 @@ function drawMap(){
     l.on({mouseover:e=>e.target.setStyle({weight:2.5,color:css('--ink')}),mouseout:e=>MAPLAYER.resetStyle(e.target)});
   }}).addTo(MAP);
   if(!MAP._fitted){ MAP.fitBounds(MAPLAYER.getBounds(),{padding:[8,8]}); MAP._fitted=true; }
+  /* quantidade escrita em cada estado que tem RMA (o detalhe continua no tooltip) */
+  if(MAPLBL) MAP.removeLayer(MAPLBL);
+  MAPLBL=LL.layerGroup(Object.entries(by).filter(([u])=>UF_LBL[u]).map(([u,o])=>LL.marker(UF_LBL[u],{interactive:false,keyboard:false,
+    icon:LL.divIcon({className:'uflbl',html:fmt(o.n),iconSize:[44,16],iconAnchor:[22,8]})}))).addTo(MAP);
   $('#mapSub').textContent=String(Y)+(mapMode==='open'?' · '+t('mapOpen').toLowerCase():'');
   $('#mapLegend').innerHTML=steps.length?`<span>${t('mapScale')}</span>`+steps.map((s,i)=>`<i style="background:${blue};opacity:${op[i]}"></i><span>${i===0?'1':fmt((steps[i-1]||0)+1)}–${fmt(s)}</span>`).filter((x,i)=>i===0||steps[i]>steps[i-1]).join(''):'';
   const rank=Object.entries(by).sort((a,b)=>b[1].n-a[1].n), tot=src.length, noUf=src.filter(r=>!r.uf).length;
@@ -868,7 +985,18 @@ $$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v
 $$('#sPer .chip').forEach(c=>c.addEventListener('click',()=>{sPer=+c.dataset.p;$$('#sPer .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));renderSup();}));
 const rerender=()=>{ if(DB) renders[cur](); };
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerender);
-new MutationObserver(rerender).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+new MutationObserver(rerender).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','data-style']});
+/* Estilo visual: "panel" (padrão, segue claro/escuro do sistema) ou "report" (identidade do PPT semanal, sempre claro) */
+let STYLE=(()=>{ try{ const q=new URLSearchParams(location.search).get('style'); if(q==='report'||q==='panel') return q; const v=localStorage.getItem('style'); if(v==='report'||v==='panel') return v; }catch(e){} return 'panel'; })();
+const FONT={panel:'Barlow, system-ui, -apple-system, Segoe UI, Roboto, sans-serif', report:'Aptos, "Segoe UI", Calibri, Arial, sans-serif'};
+function applyStyle(){
+  const r=document.documentElement;
+  if(typeof Chart!=='undefined') Chart.defaults.font.family=FONT[STYLE];
+  if(STYLE==='report'){ r.setAttribute('data-theme','light'); r.setAttribute('data-style','report'); }
+  else { r.removeAttribute('data-style'); r.removeAttribute('data-theme'); }
+  $$('.styles .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.style===STYLE));
+}
+$$('.styles .chip').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.style===STYLE) return; STYLE=b.dataset.style; try{localStorage.setItem('style',STYLE)}catch(e){} applyStyle(); }));
 
 function applyStatic(){
   document.documentElement.lang = LANG==='pt'?'pt-BR':'en';
@@ -916,7 +1044,7 @@ $('#bIn').addEventListener('click',()=>msalApp.loginRedirect({scopes:SCOPES,prom
 $('#bOut').addEventListener('click',()=>msalApp.logoutRedirect({postLogoutRedirectUri:location.origin+location.pathname}));
 $('#bRefresh').addEventListener('click',()=>refresh(false));
 (async()=>{
-  Chart.defaults.font.family='Barlow, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  applyStyle();
   applyStatic();
   if(!CFG||!CFG.clientId||CFG.clientId.startsWith('COLE')){gateMsg(()=>t('cfgIncomplete'),true,false);return;}
   gateMsg(()=>t('connecting'),false,false);
