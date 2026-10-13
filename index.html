@@ -202,7 +202,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
         <div class="langs" role="group" aria-label="Idioma / Language"><button class="chip sm" data-lang="pt" aria-pressed="true">PT</button><button class="chip sm" data-lang="en" aria-pressed="false">EN</button></div>
       </div>
       <span id="mWeek"></span><br><span id="mSrc"></span>
-      <div class="acts" id="acts" hidden><span id="mUser"></span><button class="chip" id="bRefresh" data-i18n="refresh"></button><button class="chip" id="bOut" data-i18n="signOut"></button></div></div>
+      <div class="acts" id="acts" hidden><span id="mUser"></span><button class="chip" id="bExport" data-i18n="export"></button><button class="chip" id="bRefresh" data-i18n="refresh"></button><button class="chip" id="bOut" data-i18n="signOut"></button></div></div>
   </div>
 </header>
 <nav class="tabs" data-i18n-aria="tabsAria">
@@ -340,6 +340,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 const I18N = {
 pt: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções', styleAria:'Estilo visual', stPanel:'Painel', stReport:'Relatório D&S',
+  export:'Exportar relatório', exporting:'Gerando…', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpNoteTexts:'Os textos de resumo, riscos e próximos passos vêm do report.json do painel.', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Principais riscos e issues',
   weekLine:'Semana <strong>{w}</strong> · dados atualizados em <strong>{d}</strong> às {h}', weekTip:'Última alteração nos arquivos da pasta: {n}', hSummaryW:'Resumo da semana {w}',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
   tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
@@ -383,6 +384,7 @@ pt: {
 },
 en: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections', styleAria:'Visual style', stPanel:'Dashboard', stReport:'D&S report',
+  export:'Export report', exporting:'Generating…', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpNoteTexts:'Summary, risk and next-step texts come from the dashboard report.json.', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Top risks and issues',
   weekLine:'Week <strong>{w}</strong> · data updated on <strong>{d}</strong> at {h}', weekTip:'Latest change in the folder files: {n}', hSummaryW:'Week {w} summary',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
   tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
@@ -1055,6 +1057,17 @@ async function refresh(first){
 $('#bIn').addEventListener('click',()=>msalApp.loginRedirect({scopes:SCOPES,prompt:'select_account'}));
 $('#bOut').addEventListener('click',()=>msalApp.logoutRedirect({postLogoutRedirectUri:location.origin+location.pathname}));
 $('#bRefresh').addEventListener('click',()=>refresh(false));
+/* Exportar relatório: carrega a biblioteca de PowerPoint e o gerador só na primeira vez que alguém clica */
+const loadScript=src=>new Promise((ok,ko)=>{ if(document.querySelector(`script[src="${src}"]`)) return ok(); const el=document.createElement('script'); el.src=src; el.onload=ok; el.onerror=()=>ko(new Error(src)); document.head.appendChild(el); });
+$('#bExport').addEventListener('click',async()=>{
+  const b=$('#bExport'); if(b.disabled||!DB) return; b.disabled=true; b.textContent=t('exporting');
+  try{
+    if(typeof PptxGenJS==='undefined') await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
+    if(typeof window.buildReport!=='function') await loadScript('report.js');
+    await window.buildReport();
+  }catch(e){ console.error(e); alert(t('exportFail',{m:e&&e.message||e})); }
+  finally{ b.disabled=false; b.textContent=t('export'); }
+});
 (async()=>{
   applyStyle();
   applyStatic();
