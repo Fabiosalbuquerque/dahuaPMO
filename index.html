@@ -226,7 +226,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   </div>
   <div class="grid g4 mt" id="kpis"></div>
   <div class="grid g3 mt">
-    <div class="panel"><h2 data-i18n="hSummary"></h2><p id="resumo" style="margin:0"></p><h2 class="mt" data-i18n="hHighlights"></h2><ul class="plain" id="destaques"></ul></div>
+    <div class="panel"><h2 id="hSummaryT" data-i18n="hSummary"></h2><p id="resumo" style="margin:0"></p><h2 class="mt" data-i18n="hHighlights"></h2><ul class="plain" id="destaques"></ul></div>
     <div class="panel"><h2 data-i18n="hAlerts"></h2><div id="alertas"></div></div>
     <div class="panel"><h2 data-i18n="hNext"></h2><ul class="plain" id="proximos"></ul></div>
   </div>
@@ -340,7 +340,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 const I18N = {
 pt: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções', styleAria:'Estilo visual', stPanel:'Painel', stReport:'Relatório D&S',
-  weekLine:'Semana <strong>{w}</strong>, report de <strong>{d}</strong>',
+  weekLine:'Semana <strong>{w}</strong> · dados atualizados em <strong>{d}</strong> às {h}', weekTip:'Última alteração nos arquivos da pasta: {n}', hSummaryW:'Resumo da semana {w}',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
   tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
   needLogin:'Entre com sua conta Microsoft da empresa para ver os dados.', connecting:'Conectando…', loadingFolder:'Carregando os dados da pasta…',
@@ -383,7 +383,7 @@ pt: {
 },
 en: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections', styleAria:'Visual style', stPanel:'Dashboard', stReport:'D&S report',
-  weekLine:'Week <strong>{w}</strong>, report of <strong>{d}</strong>',
+  weekLine:'Week <strong>{w}</strong> · data updated on <strong>{d}</strong> at {h}', weekTip:'Latest change in the folder files: {n}', hSummaryW:'Week {w} summary',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
   tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
   needLogin:'Sign in with your company Microsoft account to see the data.', connecting:'Connecting…', loadingFolder:'Loading data from the folder…',
@@ -1006,9 +1006,19 @@ function applyStatic(){
   $$('[data-i18n-aria]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAria));});
   $$('.langs .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===LANG));
 }
+/* semana ISO 8601 (segunda a domingo), a mesma numeração do report semanal e da coluna Week Open */
+function isoWeek(d0){ const d=new Date(Date.UTC(d0.getFullYear(),d0.getMonth(),d0.getDate())); const day=d.getUTCDay()||7; d.setUTCDate(d.getUTCDate()+4-day); const y0=new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil(((d-y0)/864e5+1)/7); }
 function renderMeta(){
   if(!REP||!LOAD) { $('#mWeek').innerHTML=''; return; }
-  $('#mWeek').innerHTML=t('weekLine',{w:esc(REP.semana),d:esc(fdate(REP.data))});
+  /* semana e data vêm da última alteração dos arquivos de dados na pasta, não do report.json */
+  const last=LOAD.files.reduce((a,f)=>{const d=new Date(f.mod);return !a||d>a.d?{d,f}:a;},null);
+  if(last){
+    const d=last.d, dt=d.toLocaleDateString(LOC(),LANG==='pt'?{day:'2-digit',month:'2-digit',year:'numeric'}:{month:'short',day:'numeric',year:'numeric'}), hm=pad(d.getHours())+':'+pad(d.getMinutes());
+    $('#mWeek').innerHTML=t('weekLine',{w:isoWeek(d),d:esc(dt),h:hm});
+    $('#mWeek').title=t('weekTip',{n:last.f.name});
+  }
+  /* os textos do resumo continuam sendo os do report.json: o título mostra de qual semana eles são */
+  $('#hSummaryT').textContent=REP.semana?t('hSummaryW',{w:REP.semana}):t('hSummary');
   const hh=LOAD.loadedAt; $('#mSrc').textContent=LOAD.srcErr?t('refreshFail',{m:LOAD.srcErr()}):t('source',{h:pad(hh.getHours())+':'+pad(hh.getMinutes())});
   const fl=LOAD.files.map(f=>t('fileLine',{n:f.name,d:new Date(f.mod).toLocaleString(LOC(),{dateStyle:'short',timeStyle:'short'})})+(f.sheet?t('sheetLine',{s:f.sheet}):''));
   $('#foot').textContent=t('foot',{f:fl.join('; ')});
