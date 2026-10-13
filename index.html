@@ -366,8 +366,8 @@ pt: {
   hLevel:'Projetos por nível', sLevel:'por tipo', hPhase:'Projetos por fase', hInd:'Projetos por indústria', sInd:'valor de contrato em USD',
   hProjTbl:'Projetos em andamento', cProject:'Projeto', cClass:'Classificação', cType:'Tipo', cLevel:'Nível', cPhase:'Fase', cContract:'Contrato (USD)',
   dsProjects:'Projetos', notInformed:'Não informado', noProj:'Nenhum projeto com esses filtros. Limpe a busca ou troque um filtro.', pCount:'{n} projetos. Clique no título da coluna para ordenar.',
-  kCC:'Tickets de call center em 2026', kCCY:'Tickets de call center em {y}', kEngY:'Tickets de engenharia em {y}', ccNoResp:'O call center não tem responsável na planilha: os gráficos de call center mostram a equipe toda.', kEng:'Tickets de engenharia no ano', kEngD:'{n} com ITR · {c} fechados na semana {w}', kItr:'ITRs abertos na HQ em {y}', kItrD:'{n} ainda em andamento', kOpenWait:'Tickets em aberto ou aguardando',
-  hItrMonth:'ITRs abertos na HQ por mês', itrSrc:'Fonte: aba ITR database. Só conta como ITR o caso com número na base da HQ.', hItrOpen:'ITRs em andamento', cProdLine:'Linha de produto', cDays:'Dias', dsPts:'Suporte técnico de produto', dsOtherTypes:'Outros tipos', total:'Total', noItrOpen:'Nenhum ITR em andamento.',
+  kCC:'Tickets de call center em 2026', kCCY:'Tickets de call center em {y}', kEngY:'Tickets de engenharia em {y}', ccNoResp:'O call center não tem responsável na planilha: os gráficos de call center mostram a equipe toda.', kEng:'Tickets de engenharia no ano', kEngD:'{n} com ITR · {c} fechados na semana {w}', kItr:'ITRs de suporte técnico (Local) em {y}', kItrD:'{n} ainda em andamento', kOpenWait:'Tickets em aberto ou aguardando',
+  hItrMonth:'ITRs abertos na HQ por mês', itrSrc:'Fonte: aba ITR database. Contam os casos com Year = ano escolhido, Case Type = Product Technical Support e Local / Others = Local. A tabela ao lado mostra todos os casos abertos, de qualquer tipo.', hItrOpen:'ITRs em andamento (todos os tipos)', cProdLine:'Linha de produto', cDays:'Dias', dsPts:'Suporte técnico de produto', dsOtherTypes:'Outros tipos', total:'Total', noItrOpen:'Nenhum ITR em andamento.',
   hCC:'Call center por mês', sCC:'suporte técnico e RMA', hCh:'Canais de atendimento por mês', hWk:'Tickets de engenharia por semana', sWk:'abertos e fechados',
   hProd:'Issues por produto', p4:'4 semanas', p8:'8 semanas', pYear:'Ano todo', hOpen:'Tickets em aberto',
   cCustomer:'Cliente', cProduct:'Produto', cResp:'Responsável', cWeek:'Semana', cWk:'Sem.', dsSupport:'Suporte técnico', chPortal:'Portal de suporte', chCalls:'Ligações', chRma:'Portal de RMA',
@@ -409,8 +409,8 @@ en: {
   hLevel:'Projects by level', sLevel:'by type', hPhase:'Projects by phase', hInd:'Projects by industry', sInd:'contract value in USD',
   hProjTbl:'Ongoing projects', cProject:'Project', cClass:'Classification', cType:'Type', cLevel:'Level', cPhase:'Phase', cContract:'Contract (USD)',
   dsProjects:'Projects', notInformed:'Not specified', noProj:'No projects match these filters. Clear the search or change a filter.', pCount:'{n} projects. Click a column header to sort.',
-  kCC:'Call center tickets in 2026', kCCY:'Call center tickets in {y}', kEngY:'Engineering tickets in {y}', ccNoResp:'The call center sheet has no owner column: call center charts show the whole team.', kEng:'Engineering tickets this year', kEngD:'{n} with ITR · {c} closed in week {w}', kItr:'ITRs opened at HQ in {y}', kItrD:'{n} still in progress', kOpenWait:'Open or waiting tickets',
-  hItrMonth:'ITRs opened at HQ by month', itrSrc:'Source: ITR database sheet. Only cases with an HQ case number count as ITRs.', hItrOpen:'ITRs in progress', cProdLine:'Product line', cDays:'Days', dsPts:'Product technical support', dsOtherTypes:'Other types', total:'Total', noItrOpen:'No ITRs in progress.',
+  kCC:'Call center tickets in 2026', kCCY:'Call center tickets in {y}', kEngY:'Engineering tickets in {y}', ccNoResp:'The call center sheet has no owner column: call center charts show the whole team.', kEng:'Engineering tickets this year', kEngD:'{n} with ITR · {c} closed in week {w}', kItr:'Technical support ITRs (Local) in {y}', kItrD:'{n} still in progress', kOpenWait:'Open or waiting tickets',
+  hItrMonth:'ITRs opened at HQ by month', itrSrc:'Source: ITR database sheet. Counts cases with Year = selected year, Case Type = Product Technical Support and Local / Others = Local. The table next to it shows every open case, of any type.', hItrOpen:'ITRs in progress (all types)', cProdLine:'Product line', cDays:'Days', dsPts:'Product technical support', dsOtherTypes:'Other types', total:'Total', noItrOpen:'No ITRs in progress.',
   hCC:'Call center by month', sCC:'technical support and RMA', hCh:'Service channels by month', hWk:'Engineering tickets by week', sWk:'opened and closed',
   hProd:'Issues by product', p4:'4 weeks', p8:'8 weeks', pYear:'Full year', hOpen:'Open tickets',
   cCustomer:'Customer', cProduct:'Product', cResp:'Owner', cWeek:'Week', cWk:'Wk', dsSupport:'Technical support', chPortal:'Support portal', chCalls:'Phone calls', chRma:'RMA portal',
@@ -589,7 +589,7 @@ function parseMajor(wb) {
 function parseItr(wb) {
   const ws = wb.Sheets['ITR database'];
   if (!ws) return null;
-  return mapRows(ws, { id: 'Case Number', type: 'Case Type', y: 'Year', mo: 'Submitted month', st: 'Status', age: 'Aging', cust: 'Customer Name', line: 'Product line', subj: 'Subject', owner: 'Case Owner' })
+  return mapRows(ws, { id: 'Case Number', type: 'Case Type', y: 'Year', mo: 'Submitted month', st: 'Status', age: 'Aging', cust: 'Customer Name', line: 'Product line', subj: 'Subject', owner: 'Case Owner', loc: 'Local / Others' })
     .filter(r => r.id).map(r => Object.assign(r, { y: num(r.y), mo: num(r.mo), age: num(r.age), rk: personKey(r.owner) }));
 }
 
@@ -839,10 +839,14 @@ function renderSup(){
   const SY=DB.support.filter(s=>s.yr===Y), S=SY.filter(s=>!RK||s.rk===RK);
   const open=S.filter(s=>s.st!=='Closed'), withItr=S.filter(s=>s.itr);
   const maxW=Math.max(0,...SY.map(s=>s.wo||0)), closedWk=S.filter(s=>s.st==='Closed'&&s.wc===maxW).length;
-  const I=DB.itrs, iCur=I?I.filter(r=>r.y===Y&&(!RK||r.rk===RK)):[], iOpen=iCur.filter(r=>r.st&&r.st!=='Closed');
+  /* Regra de contagem do gráfico e do card de ITRs (definida pelo escritório de projetos):
+     Year (col. E) = ano escolhido, Case Type (col. C) = Product Technical Support, Local / Others (col. D) = Local.
+     A tabela "ITRs em andamento" continua mostrando todos os casos abertos, de qualquer tipo. */
+  const ITR_RULE=r=>r.type==='Product Technical Support'&&String(r.loc||'').trim().toLowerCase()==='local';
+  const I=DB.itrs, iAll=I?I.filter(r=>r.y===Y&&(!RK||r.rk===RK)):[], iCur=iAll.filter(ITR_RULE), iOpen=iAll.filter(r=>r.st&&r.st!=='Closed');
   const kp=[CC.length?[fmt(tot),t('kCCY',{y:Y}),'']:['–',t('kCCY',{y:Y}),t('noDataY')],
     SY.length?[fmt(S.length),t('kEngY',{y:Y}),t('kEngD',{n:fmt(withItr.length),w:maxW,c:fmt(closedWk)})]:['–',t('kEngY',{y:Y}),t('noDataY')]];
-  if(I) kp.push([fmt(iCur.length),t('kItr',{y:Y}),t('kItrD',{n:fmt(iOpen.length)})]);
+  if(I) kp.push([fmt(iCur.length),t('kItr',{y:Y}),t('kItrD',{n:fmt(iCur.filter(r=>r.st&&r.st!=='Closed').length)})]);
   kp.push([SY.length?fmt(open.length):'–',t('kOpenWait'),'']);
   $('#sKpis').className='grid '+(kp.length===4?'g4':'g3');
   $('#sKpis').innerHTML=kp.map(([n,l,d])=>`<div class="panel kpi"><div class="n">${n}</div><div class="l">${l}</div>${d?`<div class="d">${d}</div>`:''}</div>`).join('');
@@ -858,13 +862,11 @@ function renderSup(){
   $('#itrBlock').hidden=!I;
   if(!I) return;
   $('#itrYearLbl').textContent=String(Y);
-  const lastMo=Math.max(0,...iCur.map(r=>r.mo||0)), mos=[];for(let m=1;m<=lastMo;m++)mos.push(m);
+  const lastMo=Math.max(0,...iAll.map(r=>r.mo||0)), mos=[];for(let m=1;m<=lastMo;m++)mos.push(m);
   const PTS='Product Technical Support';
   chart('cItr',{type:'bar',data:{labels:mos.map(m=>ML[m-1]),datasets:[
-      {label:t('dsPts'),data:mos.map(m=>iCur.filter(r=>r.mo===m&&r.type===PTS).length),backgroundColor:css('--s1')},
-      {label:t('dsOtherTypes'),data:mos.map(m=>iCur.filter(r=>r.mo===m&&r.type!==PTS).length),backgroundColor:css('--s4')}]},
-    options:baseOpts({scales:{x:{stacked:true,ticks:{color:css('--muted')},grid:{display:false}},y:{stacked:true,ticks:{color:css('--muted')},grid:{color:css('--line')}}},
-      plugins:{legend:{labels:{color:css('--muted'),boxWidth:12}},tooltip:{callbacks:{footer:it=>t('total')+': '+fmt(it.reduce((a,x)=>a+x.raw,0))}}}})});
+      {label:t('dsPts'),data:mos.map(m=>iCur.filter(r=>r.mo===m).length),backgroundColor:css('--s1')}]},
+    options:baseOpts({plugins:{legend:{display:false}}})});
   paged('tItr',iOpen.sort((a,b)=>(b.age||0)-(a.age||0)).map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.cust)}</td><td>${esc(r.line)}</td><td><span class="pill md">${esc(r.st)}</span></td><td class="num">${fmt(r.age)}</td></tr>`),`<tr><td colspan="5">${t('noItrOpen')}</td></tr>`);
 }
 
