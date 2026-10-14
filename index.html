@@ -348,8 +348,9 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 </dialog>
 <footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
-<script src="config.js"></script>
-<script src="insights.js"></script>
+<script>window.APP_VERSION="2026.10.14-2";</script>
+<script src="config.js?v=2026.10.14-2"></script>
+<script src="insights.js?v=2026.10.14-2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
@@ -1194,7 +1195,7 @@ $('#xGo').addEventListener('click',async()=>{
   const keep={DB,INS};
   try{
     if(typeof PptxGenJS==='undefined') await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
-    if(typeof window.buildReport!=='function') await loadScript('report.js');
+    if(typeof window.buildReport!=='function') await loadScript('report.js?v='+window.APP_VERSION);
     let opt={};
     if(key){
       /* semana salva: o relatório usa os dados e textos daquela semana */

@@ -98,6 +98,14 @@
   }
 
   /* ---------- montagem ---------- */
+  /* Análise da semana: usa a que o painel já montou (INS) ou monta agora (insights.js).
+     Se a página estiver numa versão antiga (sem insights.js), avisa para recarregar em vez de travar. */
+  function weekInsights(ref) {
+    if (typeof INS !== 'undefined' && INS) return INS;
+    if (typeof buildInsights === 'function') return buildInsights(DB, ref, null);
+    throw new Error(LANG === 'pt' ? 'O painel aberto está numa versão antiga. Recarregue a página (Ctrl+F5) e exporte de novo.'
+                                  : 'The open dashboard is an old version. Reload the page (Ctrl+F5) and export again.');
+  }
   /* opt.week / opt.date: semana e data dos dados (semana salva). Sem opt, usa os dados atuais. */
   window.buildReport = async function (opt) {
     opt = opt || {};
@@ -133,7 +141,7 @@
       kpis(s, [[t('createdIn', { y: D.Y }), fmt(D.created)], [CLS['2026 Project'], fmt(D.byC['2026 Project'] || 0)], [CLS['Project Backlog'], fmt(D.byC['Project Backlog'] || 0)],
         [CLS['Warranty phase'], fmt(D.byC['Warranty phase'] || 0)], [CLS['Stock Project'], fmt(D.byC['Stock Project'] || 0)]], 1.05, 1.3);
       const gap = 0.2, w = (CW - 2 * gap) / 3, y = 2.55, h = 4.35;
-      const I = INS || buildInsights(DB, ref, null);
+      const I = weekInsights(ref);
       const titles = [t('hSummaryW', { w: wk }), t('hAlerts'), t('hNext')];
       titles.forEach((tt, i) => {
         const x = M + i * (w + gap);
@@ -160,7 +168,7 @@
         chartOpts(M + 4.9, 1.15, CW - 5.0, 3.7, t('rpLevel', { n: D.activeN }), { barDir: 'col', barGrouping: 'clustered', dataLabelPosition: 'outEnd' }));
       card(s, M, 5.1, CW, 1.85);
       s.addText(t('hSuperv').toUpperCase(), { x: M + 0.2, y: 5.18, w: CW - 0.4, h: 0.35, isTextBox: true, fontFace: FONT, fontSize: 12, bold: true, color: COL.navy, margin: 0 });
-      const pfl = ((INS || buildInsights(DB, ref, null)).portfolio || []).slice(0, 5);
+      const pfl = (weekInsights(ref).portfolio || []).slice(0, 5);
       s.addText(pfl.length ? pfl.flatMap((o, i) => [{ text: `${o.name}: `, options: { bold: true } },
           { text: pfLine(o), options: { breakLine: i < pfl.length - 1 } }]) : '–',
         { x: M + 0.2, y: 5.55, w: CW - 0.4, h: 1.35, isTextBox: true, valign: 'top', fontFace: FONT, fontSize: 10, color: COL.navy, margin: 0, paraSpaceAfter: 2 });
@@ -224,7 +232,7 @@
     /* 6. Riscos e issues do report */
     {
       const s = slide(t('rpSecRisk'), t('rpHot'));
-      const mr = ((INS || buildInsights(DB, ref, null)).majorRisks || []).slice(0, 10);
+      const mr = (weekInsights(ref).majorRisks || []).slice(0, 10);
       if (mr.length) table(s, [t('cProject'), 'Delivery PM', t('cOpenRisk'), t('cUpdated')],
         mr.map(h => [trunc(h.name, 48), h.pm || '–', h.risks.slice(0, 2).map(x => '• ' + trunc(x, 150)).join('\n'), fdate(h.upd)]), M, 1.05, CW, [3.0, 1.7, CW - 5.9, 1.2], 8.5);
       else s.addText(t('noMajorRisks'), { x: M, y: 1.2, w: CW, h: 0.4, isTextBox: true, fontFace: FONT, fontSize: 12, color: COL.muted, margin: 0 });
