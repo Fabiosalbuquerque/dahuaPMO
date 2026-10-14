@@ -132,6 +132,12 @@ td .pill{white-space:normal;line-height:1.3;display:inline-block}
 #tOpen td:nth-child(1),#tOpen td:nth-child(2){max-width:130px}
 #tItr td:nth-child(2),#tItr td:nth-child(3){max-width:170px}
 #tItr td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+.pf{display:grid;gap:0}
+.pfrow{display:grid;grid-template-columns:minmax(140px,220px) 1fr;gap:4px 16px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.pfrow:first-child{border-top:0}
+.pfrow span{color:var(--muted)}
+@media (max-width:640px){.pfrow{grid-template-columns:1fr}}
+.ainote{margin:8px 2px 0}
 .sup{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
 .sup b{font:700 20px/1.2 var(--cond)}
 .acts{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
@@ -237,7 +243,8 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <div class="panel"><h2 data-i18n="hAlerts"></h2><div id="alertas"></div></div>
     <div class="panel"><h2 data-i18n="hNext"></h2><ul class="plain" id="proximos"></ul></div>
   </div>
-  <div class="panel mt"><h2 data-i18n="hSuperv"></h2><div class="sup" id="superv"></div></div>
+  <p class="count ainote" data-i18n="aiNote"></p>
+  <div class="panel mt"><h2 data-i18n="hSuperv"></h2><div class="pf" id="superv"></div></div>
 </section>
 
 <section class="view" id="v-proj">
@@ -320,7 +327,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 
 <section class="view" id="v-risk">
   <div class="panel"><h2 data-i18n="hHot"></h2>
-    <div class="tblwrap paged"><table id="tHot"><thead><tr><th data-i18n="cCustomer"></th><th data-i18n="cRiskIssue"></th><th data-i18n="cSituation"></th></tr></thead><tbody></tbody></table></div></div>
+    <div class="tblwrap paged"><table id="tHot"><thead><tr><th data-i18n="cProject"></th><th>Delivery PM</th><th data-i18n="cOpenRisk"></th><th data-i18n="cUpdated"></th></tr></thead><tbody></tbody></table></div></div>
   <div class="panel mt"><h2><span data-i18n="hRat"></span><small>RAT</small></h2>
     <div class="filters">
       <label>Status<select id="kS"><option value="Open" data-i18n="stOpen"></option><option value="" data-i18n="all"></option><option value="Closed" data-i18n="stClosed"></option></select></label>
@@ -342,6 +349,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 <footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
 <script src="config.js"></script>
+<script src="insights.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
@@ -353,13 +361,13 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 const I18N = {
 pt: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções', styleAria:'Estilo visual', stPanel:'Painel', stReport:'Relatório D&S',
-  export:'Exportar relatório', exporting:'Gerando…', xTitle:'Exportar relatório semanal', xWeekLbl:'Semana dos dados', xCurrent:'Dados atuais (semana {w})', xWeekOpt:'Semana {w} de {y}, salva em {d}', xLoading:'Buscando semanas salvas…', xNoWeeks:'Ainda não há semanas anteriores salvas.', xListFail:'Não foi possível listar as semanas salvas. Dá pra exportar os dados atuais.', xCancel:'Cancelar', snapMissing:'Não encontrei os dados da semana {w} (snapshot.json).', snapSaved:'Semana {k} salva no SharePoint às {h}.', snapUpToDate:'Semana {k} já está salva no SharePoint.', snapNoPerm:'Semana {k} não foi salva: sua conta não tem permissão de edição na pasta.', snapErr:'Não foi possível salvar a semana {k} no SharePoint.', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpNoteTexts:'Os textos de resumo, riscos e próximos passos vêm do report.json do painel.', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Principais riscos e issues',
+  export:'Exportar relatório', exporting:'Gerando…', xTitle:'Exportar relatório semanal', xWeekLbl:'Semana dos dados', xCurrent:'Dados atuais (semana {w})', xWeekOpt:'Semana {w} de {y}, salva em {d}', xLoading:'Buscando semanas salvas…', xNoWeeks:'Ainda não há semanas anteriores salvas.', xListFail:'Não foi possível listar as semanas salvas. Dá pra exportar os dados atuais.', xCancel:'Cancelar', snapMissing:'Não encontrei os dados da semana {w} (snapshot.json).', snapSaved:'Semana {k} salva no SharePoint às {h}.', snapUpToDate:'Semana {k} já está salva no SharePoint.', snapNoPerm:'Semana {k} não foi salva: sua conta não tem permissão de edição na pasta.', snapErr:'Não foi possível salvar a semana {k} no SharePoint.', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Riscos em aberto nos Major Projects',
   weekLine:'Semana <strong>{w}</strong> · dados atualizados em <strong>{d}</strong> às {h}', weekTip:'Última alteração nos arquivos da pasta: {n}', hSummaryW:'Resumo da semana {w}',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
   tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
   needLogin:'Entre com sua conta Microsoft da empresa para ver os dados.', connecting:'Conectando…', loadingFolder:'Carregando os dados da pasta…',
   cfgIncomplete:'Configuração incompleta: preencha clientId e tenantId em config.js.', refreshFail:'Falha ao atualizar: {m}',
-  source:'Dados lidos do SharePoint às {h}', fileLine:'{n} (alterado em {d})', sheetLine:', aba {s}', foot:'Arquivos: {f}. Textos do report: report.json.',
+  source:'Dados lidos do SharePoint às {h}', fileLine:'{n} (alterado em {d})', sheetLine:', aba {s}', foot:'Arquivos: {f}.',
   errFile:'Não encontrei na pasta um arquivo Excel com "{p}" no nome. Confira o nome do arquivo ou o padrão em config.js.',
   errDownload:'Não consegui baixar "{n}" (HTTP {s}).', errSheet:'A aba "{s}" não existe no arquivo. Ela foi renomeada?',
   errCallHdr:'Não encontrei o cabeçalho "Mês" na aba Call Center.', errRat:'Não encontrei a aba do RAT (nome começando com "RAT") no arquivo de riscos.',
@@ -374,7 +382,7 @@ pt: {
   lifeText:'{a} projetos ativos hoje e {w} já em garantia. A barra mostra onde está cada projeto acompanhado pelo escritório.',
   kTickets:'Tickets de suporte no ano', kLastMonth:'{n} em {m}', kRmaCreated:'RMAs criados em 2026', kRmaPrev:'{n} em todo o 2025',
   kRmaOpen:'RMAs de 2026 em aberto', kOver30:'{n} com mais de 30 dias', kRiskOpen:'Riscos e issues em aberto', kHighImp:'{n} de importância alta',
-  hSummary:'Resumo da semana', hHighlights:'Destaques', hAlerts:'Riscos e alertas', hNext:'Próximos passos', hSuperv:'Atividades supervisionadas pela equipe regional',
+  hSummary:'Resumo da semana', hHighlights:'Destaques', hAlerts:'Riscos e alertas', hNext:'Próximos passos', hSuperv:'Carteira por PM', aiNote:'Resumo, destaques, alertas, próximos passos e carteira gerados automaticamente pelo painel a partir das planilhas da semana.', cOpenRisk:'Riscos em aberto', noMajorRisks:'Nenhum risco em aberto registrado nos Major Projects.',
   fType:'Tipo', fLevel:'Nível', fPhase:'Fase', fInd:'Indústria', fSearch:'Buscar', all:'Todos', allF:'Todas', searchPh:'Projeto, cliente ou PM',
   kCurProj:'Projetos atuais', kContract:'Valor total de contrato',
   hLevel:'Projetos por nível', sLevel:'por tipo', hPhase:'Projetos por fase', hInd:'Projetos por indústria', sInd:'valor de contrato em USD',
@@ -390,20 +398,20 @@ pt: {
   hMap:'RMAs por estado', mapAll:'Todos os RMAs', mapOpen:'Em aberto', mapScale:'RMAs:', mapTipN:'{n} RMAs', mapTipOpen:'{n} em aberto', mapTipNone:'Nenhum RMA', mapNoData:'Nenhum RMA com esses filtros.', mapMore:'+{n} estados no mapa.', mapNoUf:'{n} RMAs sem estado informado.', mapFail:'Não foi possível carregar o mapa (arquivo brazil-states.geojson).',
   hYoY:'RMAs por mês', sYoY:'comparação com o ano anterior', hSC:'RMAs por service center', sSC:'IW e OOW', hAge:'RMAs abertos por tempo', hReg:'RMAs por região', hModel:'Modelos com mais RMAs',
   cModel:'Modelo', cOpen:'Abertos', age1:'0 a 7 dias', age2:'8 a 30 dias', age3:'Mais de 30 dias',
-  hHot:'Principais riscos e issues dos projetos atuais', cRiskIssue:'Risco ou issue', cSituation:'Situação', hRat:'Registro de riscos e issues',
+  hHot:'Riscos em aberto nos Major Projects', cRiskIssue:'Risco ou issue', cSituation:'Situação', hRat:'Registro de riscos e issues',
   stOpen:'Em aberto', stClosed:'Fechados', fImp:'Importância', impHigh:'Alta', impMedium:'Média', impLow:'Baixa',
   kImpHigh:'Importância alta', kOver30r:'Com mais de 30 dias', kProjInv:'Projetos envolvidos', cTitle:'Título', cFup:'Último follow-up',
   tRisk:'Risco', tIssue:'Issue', agClosed:'Fechado', noProg:'Sem andamento registrado.', noRat:'Nenhum registro com esses filtros.', clickRow:'Clique numa linha para ver o andamento.'
 },
 en: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections', styleAria:'Visual style', stPanel:'Dashboard', stReport:'D&S report',
-  export:'Export report', exporting:'Generating…', xTitle:'Export weekly report', xWeekLbl:'Data week', xCurrent:'Current data (week {w})', xWeekOpt:'Week {w} of {y}, saved on {d}', xLoading:'Looking for saved weeks…', xNoWeeks:'No previous weeks saved yet.', xListFail:'Could not list the saved weeks. You can still export the current data.', xCancel:'Cancel', snapMissing:'Could not find the data for week {w} (snapshot.json).', snapSaved:'Week {k} saved to SharePoint at {h}.', snapUpToDate:'Week {k} is already saved to SharePoint.', snapNoPerm:'Week {k} was not saved: your account has no edit permission on the folder.', snapErr:'Could not save week {k} to SharePoint.', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpNoteTexts:'Summary, risk and next-step texts come from the dashboard report.json.', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Top risks and issues',
+  export:'Export report', exporting:'Generating…', xTitle:'Export weekly report', xWeekLbl:'Data week', xCurrent:'Current data (week {w})', xWeekOpt:'Week {w} of {y}, saved on {d}', xLoading:'Looking for saved weeks…', xNoWeeks:'No previous weeks saved yet.', xListFail:'Could not list the saved weeks. You can still export the current data.', xCancel:'Cancel', snapMissing:'Could not find the data for week {w} (snapshot.json).', snapSaved:'Week {k} saved to SharePoint at {h}.', snapUpToDate:'Week {k} is already saved to SharePoint.', snapNoPerm:'Week {k} was not saved: your account has no edit permission on the folder.', snapErr:'Could not save week {k} to SharePoint.', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Open risks on Major Projects',
   weekLine:'Week <strong>{w}</strong> · data updated on <strong>{d}</strong> at {h}', weekTip:'Latest change in the folder files: {n}', hSummaryW:'Week {w} summary',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
   tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
   needLogin:'Sign in with your company Microsoft account to see the data.', connecting:'Connecting…', loadingFolder:'Loading data from the folder…',
   cfgIncomplete:'Incomplete setup: fill in clientId and tenantId in config.js.', refreshFail:'Refresh failed: {m}',
-  source:'Data loaded from SharePoint at {h}', fileLine:'{n} (modified {d})', sheetLine:', sheet {s}', foot:'Files: {f}. Report text: report.json.',
+  source:'Data loaded from SharePoint at {h}', fileLine:'{n} (modified {d})', sheetLine:', sheet {s}', foot:'Files: {f}.',
   errFile:'No Excel file with "{p}" in its name was found in the folder. Check the file name or the pattern in config.js.',
   errDownload:'Could not download "{n}" (HTTP {s}).', errSheet:'The sheet "{s}" does not exist in the file. Was it renamed?',
   errCallHdr:'Could not find the "Mês" header in the Call Center sheet.', errRat:'Could not find the RAT sheet (name starting with "RAT") in the risk file.',
@@ -418,7 +426,7 @@ en: {
   lifeText:'{a} projects active today and {w} already in warranty. The bar shows where each project tracked by the PMO stands.',
   kTickets:'Support tickets this year', kLastMonth:'{n} in {m}', kRmaCreated:'RMAs created in 2026', kRmaPrev:'{n} in all of 2025',
   kRmaOpen:'Open 2026 RMAs', kOver30:'{n} older than 30 days', kRiskOpen:'Open risks and issues', kHighImp:'{n} high importance',
-  hSummary:'Weekly summary', hHighlights:'Highlights', hAlerts:'Risks & alerts', hNext:'Next steps', hSuperv:'Activities supervised by the regional delivery team',
+  hSummary:'Weekly summary', hHighlights:'Highlights', hAlerts:'Risks & alerts', hNext:'Next steps', hSuperv:'Portfolio by PM', aiNote:'Summary, highlights, alerts, next steps and portfolio generated automatically by the dashboard from this week\'s spreadsheets.', cOpenRisk:'Open risks', noMajorRisks:'No open risks recorded on the Major Projects.',
   fType:'Type', fLevel:'Level', fPhase:'Phase', fInd:'Industry', fSearch:'Search', all:'All', allF:'All', searchPh:'Project, customer or PM',
   kCurProj:'Current projects', kContract:'Total contract value',
   hLevel:'Projects by level', sLevel:'by type', hPhase:'Projects by phase', hInd:'Projects by industry', sInd:'contract value in USD',
@@ -434,7 +442,7 @@ en: {
   hMap:'RMAs by state', mapAll:'All RMAs', mapOpen:'Open', mapScale:'RMAs:', mapTipN:'{n} RMAs', mapTipOpen:'{n} open', mapTipNone:'No RMAs', mapNoData:'No RMAs match these filters.', mapMore:'+{n} more states on the map.', mapNoUf:'{n} RMAs without a state.', mapFail:'Could not load the map (brazil-states.geojson file).',
   hYoY:'RMAs by month', sYoY:'compared with the previous year', hSC:'RMAs by service center', sSC:'IW and OOW', hAge:'Open RMAs by age', hReg:'RMAs by region', hModel:'Models with most RMAs',
   cModel:'Model', cOpen:'Open', age1:'0 to 7 days', age2:'8 to 30 days', age3:'Over 30 days',
-  hHot:'Top risks and issues of current projects', cRiskIssue:'Risk or issue', cSituation:'Status', hRat:'Risk and issue log',
+  hHot:'Open risks on Major Projects', cRiskIssue:'Risk or issue', cSituation:'Status', hRat:'Risk and issue log',
   stOpen:'Open', stClosed:'Closed', fImp:'Importance', impHigh:'High', impMedium:'Medium', impLow:'Low',
   kImpHigh:'High importance', kOver30r:'Older than 30 days', kProjInv:'Projects involved', cTitle:'Title', cFup:'Last follow-up',
   tRisk:'Risk', tIssue:'Issue', agClosed:'Closed', noProg:'No progress recorded.', noRat:'No records match these filters.', clickRow:'Click a row to see the progress.'
@@ -460,8 +468,7 @@ let LANG = (() => {
 const LOC = () => LANG === 'pt' ? 'pt-BR' : 'en-US';
 const LB = () => LABELS[LANG];
 function t(k, v) { let s = (I18N[LANG][k] ?? I18N.pt[k] ?? k); if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return s; }
-/* Textos do report: report.json tem a versão em português na raiz e a inglesa no bloco "en" */
-const rp = f => (LANG !== 'pt' && REP && REP[LANG] && REP[LANG][f] != null) ? REP[LANG][f] : REP[f];
+
 
 /* ===== Fonte de dados: login Microsoft + leitura dos Excel da pasta do SharePoint/OneDrive =====
    Configuração em config.js. Cada usuário lê os arquivos com a própria permissão:
@@ -646,12 +653,12 @@ async function loadData() {
   const token = await getToken();
   const { root, items } = await listFolder(token);
   const fP = pickFile(items, 'projetos'), fR = pickFile(items, 'rma'), fK = pickFile(items, 'riscos');
-  const [wP, wR, wK, rep] = await Promise.all([
+  const [wP, wR, wK] = await Promise.all([
     readWorkbook(fP, token, ['ProjectList', 'Technical Support', 'Call Center', 'ITR database', 'Major Projects']),
     readWorkbook(fR, token, ['Database']),
-    readWorkbook(fK, token),
-    fetch('report.json', { cache: 'no-store' }).then(r => r.json())
+    readWorkbook(fK, token)
   ]);
+  const rep = null;   // os textos da semana agora são gerados pela análise automática (insights.js)
   const k = parseRiscos(wK);
   const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { risks: k.risks });
   const files = [fP, fR, fK].map(f => ({ name: f.name, mod: f.lastModifiedDateTime, id: f.id }));
@@ -696,8 +703,10 @@ async function saveSnapshot(load, force) {
     }
     const acc = msalApp.getActiveAccount() || {};
     const snap = { version: 1, week: key, savedAt: new Date().toISOString(), savedBy: acc.name || acc.username || null,
-      files: load.files.map(f => ({ name: f.name, mod: f.mod, sheet: f.sheet || null })), rep: load.rep, db: load.db };
+      files: load.files.map(f => ({ name: f.name, mod: f.mod, sheet: f.sheet || null })), insights: load.ins || null, db: load.db };
     await graphSend('PUT', `/drives/${root.driveId}/items/${wf.id}:/snapshot.json:/content`, token, JSON.stringify(snap), 'application/json');
+    if (load.ins) await graphSend('PUT', `/drives/${root.driveId}/items/${wf.id}:/metrics.json:/content`, token,
+      JSON.stringify({ version: 1, week: key, savedAt: snap.savedAt, metrics: load.ins.metrics }), 'application/json');
     if (SNAP.copyFiles) {
       /* cópia assíncrona no SharePoint (o Graph responde 202 e copia em segundo plano); substitui a cópia anterior da mesma semana */
       await Promise.all(load.files.filter(f => f.id).map(f => graphSend('POST', `/drives/${root.driveId}/items/${f.id}/copy?@microsoft.graph.conflictBehavior=replace`, token,
@@ -716,6 +725,15 @@ async function listSnapshots(load) {
     const j = await graph(`/drives/${load.root.driveId}/items/${load.root.id}:/${enc(SNAP.folder)}:/children?$top=200&$select=name,id,folder,lastModifiedDateTime`, token);
     return j.value.filter(i => i.folder && SNAP_RE.test(i.name)).sort((a, b) => b.name.localeCompare(a.name));
   } catch (e) { if (e.status === 404) return []; throw e; }
+}
+/* Métricas da semana salva mais recente antes da semana atual (para a comparação "Desde a semana X") */
+async function readPrevMetrics(load, curKey) {
+  try {
+    const prev = (await listSnapshots(load)).find(f => f.name < curKey); if (!prev) return null;
+    const token = await getToken();
+    const r = await fetch(`${GRAPH}/drives/${load.root.driveId}/items/${load.root.id}:/${enc(SNAP.folder + '/' + prev.name + '/metrics.json')}:/content`, { headers: { Authorization: 'Bearer ' + token } });
+    return r.ok ? await r.json() : null;
+  } catch (e) { console.warn('metrics', e); return null; }
 }
 async function readSnapshot(load, key) {
   const token = await getToken();
@@ -749,7 +767,8 @@ const MES=LABELS.pt.MES; /* chave usada nas planilhas (coluna Month do RMA) */
 const ACTIVE=['2026 Project','Project Backlog','Operation phase management'];
 const cleanName=s=>s?String(s).replace(/\(\d+\)$/,'').trim():null;
 
-let DB,REP,LOAD=null,charts={},BOUND=false;
+let DB,INS=null,PREVM=null,LOAD=null,charts={},BOUND=false;
+const rebuildInsights=()=>{ if(DB&&LOAD) INS=buildInsights(DB,lastFileDate(LOAD.files),PREVM); };
 function chart(id,cfg){ if(charts[id]) charts[id].destroy(); charts[id]=new Chart(document.getElementById(id),cfg); }
 function baseOpts(extra={}){
   const ink=css('--muted'), grid=css('--line');
@@ -830,11 +849,15 @@ function renderExec(){
     [fmt(ratOpen.length),t('kRiskOpen'),`<span class="pill hi">${t('kHighImp',{n:ratHigh})}</span>`]
   ].map(([n,l,d])=>`<div class="panel kpi"><div class="n">${n}</div><div class="l">${l}</div><div class="d">${d}</div></div>`).join('');
 
-  $('#resumo').textContent=rp('resumo');
-  $('#destaques').innerHTML=rp('destaques').map(x=>`<li>${esc(x)}</li>`).join('');
-  $('#alertas').innerHTML=rp('alertas').map(a=>`<div class="alert"><span class="pill ${/^(Alto|High)$/i.test(a.nivel)?'hi':'md'}">${esc(a.nivel)}</span><span>${esc(a.texto)}</span></div>`).join('');
-  $('#proximos').innerHTML=rp('proximos').map(x=>`<li>${esc(x)}</li>`).join('');
-  $('#superv').innerHTML=rp('supervisionados').map(s=>`<b>${s.qtd}</b><div><strong>${esc(s.grupo)}</strong><br><span style="color:var(--muted)">${esc(s.itens)}</span></div>`).join('');
+  /* resumo, destaques, alertas, próximos passos e carteira: gerados por insights.js a partir das planilhas */
+  if(!INS) rebuildInsights();
+  const I=INS||{highlights:[],alerts:[],actions:[],portfolio:[]};
+  $('#hSummaryT').textContent=t('hSummaryW',{w:I.week});
+  $('#resumo').textContent=I.summary||'';
+  $('#destaques').innerHTML=I.highlights.map(x=>`<li>${esc(x)}</li>`).join('');
+  $('#alertas').innerHTML=I.alerts.length?I.alerts.map(a=>`<div class="alert"><span class="pill ${a.level==='high'?'hi':'md'}">${esc(itx(a.level==='high'?'lvlHigh':'lvlMed'))}</span><span>${esc(a.text)}</span></div>`).join(''):`<p style="margin:0">${esc(itx('none'))}</p>`;
+  $('#proximos').innerHTML=I.actions.length?I.actions.map(x=>`<li>${esc(x)}</li>`).join(''):`<li>${esc(itx('noActions'))}</li>`;
+  $('#superv').innerHTML=I.portfolio.map(o=>`<div class="pfrow"><strong>${esc(o.name)}</strong><span>${esc(pfLine(o))}</span></div>`).join('');
 }
 
 /* ===== Projetos ===== */
@@ -1050,7 +1073,7 @@ $('#ufRank').addEventListener('click',e=>{const li=e.target.closest('li[data-uf]
 $$('#mapMode .chip').forEach(c=>c.addEventListener('click',()=>{mapMode=c.dataset.m;$$('#mapMode .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));drawMap();}));
 
 /* ===== Riscos ===== */
-function renderHot(){ paged('tHot',rp('hotRisks').map(h=>`<tr><td><strong>${esc(h.cliente)}</strong></td><td>${esc(h.tema)}</td><td>${esc(h.info)}</td></tr>`),''); }
+function renderHot(){ if(!INS) rebuildInsights(); paged('tHot',((INS&&INS.majorRisks)||[]).map(h=>`<tr><td><strong>${esc(h.name)}</strong></td><td>${esc(h.pm||'–')}</td><td>${h.risks.slice(0,3).map(x=>`<div>• ${esc(trunc0(x,220))}</div>`).join('')}</td><td>${fdate(h.upd)}</td></tr>`),`<tr><td colspan="4">${t('noMajorRisks')}</td></tr>`); }
 function setupRisk(){
   const kp=$('#kP').value; $('#kP').length=1;
   [...new Set(DB.risks.map(r=>r.project).filter(Boolean))].sort().forEach(p=>$('#kP').insertAdjacentHTML('beforeend',`<option>${esc(p)}</option>`)); $('#kP').value=[...$('#kP').options].some(o=>o.value===kp)?kp:'';
@@ -1104,16 +1127,15 @@ function applyStatic(){
 /* semana ISO 8601 (segunda a domingo), a mesma numeração do report semanal e da coluna Week Open */
 function isoWeek(d0){ const d=new Date(Date.UTC(d0.getFullYear(),d0.getMonth(),d0.getDate())); const day=d.getUTCDay()||7; d.setUTCDate(d.getUTCDate()+4-day); const y0=new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil(((d-y0)/864e5+1)/7); }
 function renderMeta(){
-  if(!REP||!LOAD) { $('#mWeek').innerHTML=''; return; }
-  /* semana e data vêm da última alteração dos arquivos de dados na pasta, não do report.json */
+  if(!LOAD) { $('#mWeek').innerHTML=''; return; }
+  /* semana e data vêm da última alteração dos arquivos de dados na pasta */
   const last=LOAD.files.reduce((a,f)=>{const d=new Date(f.mod);return !a||d>a.d?{d,f}:a;},null);
   if(last){
     const d=last.d, dt=d.toLocaleDateString(LOC(),LANG==='pt'?{day:'2-digit',month:'2-digit',year:'numeric'}:{month:'short',day:'numeric',year:'numeric'}), hm=pad(d.getHours())+':'+pad(d.getMinutes());
     $('#mWeek').innerHTML=t('weekLine',{w:isoWeek(d),d:esc(dt),h:hm});
     $('#mWeek').title=t('weekTip',{n:last.f.name});
   }
-  /* os textos do resumo continuam sendo os do report.json: o título mostra de qual semana eles são */
-  $('#hSummaryT').textContent=REP.semana?t('hSummaryW',{w:REP.semana}):t('hSummary');
+
   const hh=LOAD.loadedAt; $('#mSrc').textContent=LOAD.srcErr?t('refreshFail',{m:LOAD.srcErr()}):t('source',{h:pad(hh.getHours())+':'+pad(hh.getMinutes())});
   const fl=LOAD.files.map(f=>t('fileLine',{n:f.name,d:new Date(f.mod).toLocaleString(LOC(),{dateStyle:'short',timeStyle:'short'})})+(f.sheet?t('sheetLine',{s:f.sheet}):''));
   const sn=LOAD.snap, snTxt=!sn?'':sn.status==='saved'?t('snapSaved',{k:sn.key,h:pad(sn.at.getHours())+':'+pad(sn.at.getMinutes())}):sn.status==='uptodate'?t('snapUpToDate',{k:sn.key}):sn.status==='noperm'?t('snapNoPerm',{k:sn.key}):t('snapErr',{k:sn.key});
@@ -1122,7 +1144,7 @@ function renderMeta(){
 function setLang(l){
   if(l===LANG) return; LANG=l; try{localStorage.setItem('lang',l)}catch(e){}
   applyStatic(); renderMeta(); if(gateState) gateMsg(gateState.fn,gateState.isErr,gateState.showLogin);
-  if(DB){ setupProj(); renderHot(); rerender(); }
+  if(DB){ rebuildInsights(); setupProj(); renderHot(); rerender(); }
 }
 $$('.langs .chip').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
 
@@ -1134,12 +1156,14 @@ let loading=false;
 async function refresh(first){
   if(loading) return; loading=true; $('#bRefresh').disabled=true; $('#bRefresh').textContent=t('refreshing');
   try{
-    const d=await loadData(); DB=d.db; REP=d.rep; LOAD=d;
+    const d=await loadData(); DB=d.db; LOAD=d; INS=null; rebuildInsights(); d.ins=INS;
     renderMeta();
     setupExec(); setupProj(); setupSup(); setupRma(); setupRisk(); BOUND=true;
     gateState=null; gate.hidden=true; app.hidden=false; $('#acts').hidden=false;
     if(first){let tb='exec'; try{tb=localStorage.getItem('tab')||'exec'}catch(e){} show(renders[tb]?tb:'exec');} else rerender();
     if(SNAP.auto) saveSnapshot(d).then(r=>{ if(LOAD===d){ d.snap=r; renderMeta(); } });
+    /* comparação com a semana anterior salva: entra nos destaques assim que chega */
+    readPrevMetrics(d,isoWeekKey(lastFileDate(d.files))).then(pm=>{ if(LOAD!==d||!pm) return; PREVM=pm; rebuildInsights(); d.ins=INS; if(cur==='exec') renderExec(); });
   }catch(e){
     console.error(e);
     if(e&&e.kind==='login') gateMsg(()=>t('needLogin'),false,true);
@@ -1167,20 +1191,20 @@ $('#bExport').addEventListener('click',async()=>{
 $('#xCancel').addEventListener('click',()=>$('#dlgExport').close());
 $('#xGo').addEventListener('click',async()=>{
   const go=$('#xGo'), key=$('#xWeek').value; go.disabled=true; $('#xMsg').textContent=t('exporting');
-  const keep={DB,REP};
+  const keep={DB,INS};
   try{
     if(typeof PptxGenJS==='undefined') await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
     if(typeof window.buildReport!=='function') await loadScript('report.js');
     let opt={};
     if(key){
       /* semana salva: o relatório usa os dados e textos daquela semana */
-      const snap=await readSnapshot(LOAD,key); DB=snap.db; REP=snap.rep;
+      const snap=await readSnapshot(LOAD,key); DB=snap.db; INS=buildInsights(snap.db,lastFileDate(snap.files),null);
       opt={week:+key.slice(6), date:lastFileDate(snap.files)};
     }
     await window.buildReport(opt);
     $('#dlgExport').close();
   }catch(e){ console.error(e); $('#xMsg').textContent=t('exportFail',{m:e&&e.key?t(e.key,e.vars):(e&&e.message||e)}); }
-  finally{ DB=keep.DB; REP=keep.REP; go.disabled=false; }
+  finally{ DB=keep.DB; INS=keep.INS; go.disabled=false; }
 });
 (async()=>{
   applyStyle();
