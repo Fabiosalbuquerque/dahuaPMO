@@ -7,8 +7,8 @@ window.DASH_CONFIG = {
   // Deixe null para usar o próprio endereço do site como Redirect URI
   redirectUri: null,
 
-  // Link de compartilhamento da pasta onde ficam os Excel
-  folderUrl: 'https://dahuabrasil-my.sharepoint.com/:f:/g/personal/angelo_castro_dahuabrasil_onmicrosoft_com/IgDRWBm6KY9-Q7OGG95HYHuoAbe5Bem_UXlE6ufTnyKQc0I?e=GXNdwu',
+  // Link de compartilhamento da pasta onde ficam os Excel (site SharePoint Brazil D&S Management Platform)
+  folderUrl: 'https://dahuabrasil.sharepoint.com/:f:/s/DahuaTechnologyBR/IgAgSA6X-4MLQopDajillvd9AQJ-PzjUu4eVbkhGAvgo72M?e=HaoWB2',
 
   // Como achar cada arquivo na pasta (trecho do nome, aceita expressão regular).
   // Se houver mais de um, o painel usa o alterado mais recentemente.
