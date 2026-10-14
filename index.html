@@ -141,6 +141,13 @@ td .pill{white-space:normal;line-height:1.3;display:inline-block}
 .chip.primary{background:var(--s1);color:#fff;border-color:var(--s1);padding:10px 18px;font-size:16px}
 .chip[disabled]{opacity:.6;cursor:wait}
 [hidden]{display:none!important}
+dialog#dlgExport{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(440px,calc(100vw - 32px));box-shadow:0 10px 30px rgba(0,0,0,.25)}
+dialog#dlgExport::backdrop{background:rgba(10,27,48,.45)}
+dialog#dlgExport h2{font-size:20px;margin:0 0 12px}
+dialog#dlgExport .xlbl{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+dialog#dlgExport select{width:100%}
+dialog#dlgExport .xbtns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+dialog#dlgExport .chip.primary{padding:7px 16px;font-size:15px}
 .langs{display:inline-flex;gap:4px;margin-bottom:6px}
 .chip.sm{padding:2px 9px;font-size:13px}
 footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding:16px 0}
@@ -326,6 +333,12 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   </div>
 </section>
 </main>
+<dialog id="dlgExport" aria-labelledby="xTitle">
+  <h2 id="xTitle" data-i18n="xTitle"></h2>
+  <label class="xlbl"><span data-i18n="xWeekLbl"></span><select id="xWeek"></select></label>
+  <p class="count" id="xMsg" aria-live="polite"></p>
+  <div class="xbtns"><button class="chip" id="xCancel" data-i18n="xCancel"></button><button class="chip primary" id="xGo" data-i18n="export"></button></div>
+</dialog>
 <footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
 <script src="config.js"></script>
@@ -340,7 +353,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 const I18N = {
 pt: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções', styleAria:'Estilo visual', stPanel:'Painel', stReport:'Relatório D&S',
-  export:'Exportar relatório', exporting:'Gerando…', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpNoteTexts:'Os textos de resumo, riscos e próximos passos vêm do report.json do painel.', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Principais riscos e issues',
+  export:'Exportar relatório', exporting:'Gerando…', xTitle:'Exportar relatório semanal', xWeekLbl:'Semana dos dados', xCurrent:'Dados atuais (semana {w})', xWeekOpt:'Semana {w} de {y}, salva em {d}', xLoading:'Buscando semanas salvas…', xNoWeeks:'Ainda não há semanas anteriores salvas.', xListFail:'Não foi possível listar as semanas salvas. Dá pra exportar os dados atuais.', xCancel:'Cancelar', snapMissing:'Não encontrei os dados da semana {w} (snapshot.json).', snapSaved:'Semana {k} salva no SharePoint às {h}.', snapUpToDate:'Semana {k} já está salva no SharePoint.', snapNoPerm:'Semana {k} não foi salva: sua conta não tem permissão de edição na pasta.', snapErr:'Não foi possível salvar a semana {k} no SharePoint.', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpNoteTexts:'Os textos de resumo, riscos e próximos passos vêm do report.json do painel.', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Principais riscos e issues',
   weekLine:'Semana <strong>{w}</strong> · dados atualizados em <strong>{d}</strong> às {h}', weekTip:'Última alteração nos arquivos da pasta: {n}', hSummaryW:'Resumo da semana {w}',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
   tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
@@ -384,7 +397,7 @@ pt: {
 },
 en: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections', styleAria:'Visual style', stPanel:'Dashboard', stReport:'D&S report',
-  export:'Export report', exporting:'Generating…', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpNoteTexts:'Summary, risk and next-step texts come from the dashboard report.json.', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Top risks and issues',
+  export:'Export report', exporting:'Generating…', xTitle:'Export weekly report', xWeekLbl:'Data week', xCurrent:'Current data (week {w})', xWeekOpt:'Week {w} of {y}, saved on {d}', xLoading:'Looking for saved weeks…', xNoWeeks:'No previous weeks saved yet.', xListFail:'Could not list the saved weeks. You can still export the current data.', xCancel:'Cancel', snapMissing:'Could not find the data for week {w} (snapshot.json).', snapSaved:'Week {k} saved to SharePoint at {h}.', snapUpToDate:'Week {k} is already saved to SharePoint.', snapNoPerm:'Week {k} was not saved: your account has no edit permission on the folder.', snapErr:'Could not save week {k} to SharePoint.', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpNoteTexts:'Summary, risk and next-step texts come from the dashboard report.json.', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Top risks and issues',
   weekLine:'Week <strong>{w}</strong> · data updated on <strong>{d}</strong> at {h}', weekTip:'Latest change in the folder files: {n}', hSummaryW:'Week {w} summary',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
   tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
@@ -454,7 +467,8 @@ const rp = f => (LANG !== 'pt' && REP && REP[LANG] && REP[LANG][f] != null) ? RE
    Configuração em config.js. Cada usuário lê os arquivos com a própria permissão:
    quem não tem acesso à pasta entra no painel, mas não vê dados. */
 const CFG = window.DASH_CONFIG;
-const SCOPES = ['User.Read', 'Files.Read.All'];
+/* Files.ReadWrite.All (delegada): lê os Excel e grava as pastas semanais. Cada pessoa só grava onde já tem permissão de edição. */
+const SCOPES = ['User.Read', 'Files.ReadWrite.All'];
 const GRAPH = 'https://graph.microsoft.com/v1.0';
 const msalApp = new msal.PublicClientApplication({
   auth: { clientId: CFG.clientId, authority: 'https://login.microsoftonline.com/' + CFG.tenantId,
@@ -483,6 +497,18 @@ async function graph(path, token) {
     const err = new DashError('errGeneric', { m: detail || ('HTTP ' + r.status) }, 'http'); err.status = r.status; throw err;
   }
   return r.json();
+}
+
+/* Chamada com método/corpo (escrita). Devolve a Response; erro HTTP vira exceção com .status */
+async function graphSend(method, path, token, body, contentType) {
+  const h = { Authorization: 'Bearer ' + token };
+  if (body !== undefined) h['Content-Type'] = contentType || 'application/json';
+  const r = await fetch(GRAPH + path, { method, headers: h, body: body === undefined ? undefined : (typeof body === 'string' || body instanceof Blob ? body : JSON.stringify(body)) });
+  if (!r.ok) {
+    let detail = ''; try { detail = (await r.json()).error?.message || ''; } catch (e) {}
+    const err = new DashError('errGeneric', { m: detail || ('HTTP ' + r.status) }, 'http'); err.status = r.status; throw err;
+  }
+  return r;
 }
 
 /* Link de compartilhamento -> id aceito pelo endpoint /shares do Graph */
@@ -618,7 +644,7 @@ function parseRiscos(wb) {
 
 async function loadData() {
   const token = await getToken();
-  const { items } = await listFolder(token);
+  const { root, items } = await listFolder(token);
   const fP = pickFile(items, 'projetos'), fR = pickFile(items, 'rma'), fK = pickFile(items, 'riscos');
   const [wP, wR, wK, rep] = await Promise.all([
     readWorkbook(fP, token, ['ProjectList', 'Technical Support', 'Call Center', 'ITR database', 'Major Projects']),
@@ -628,9 +654,74 @@ async function loadData() {
   ]);
   const k = parseRiscos(wK);
   const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { risks: k.risks });
-  const files = [fP, fR, fK].map(f => ({ name: f.name, mod: f.lastModifiedDateTime }));
+  const files = [fP, fR, fK].map(f => ({ name: f.name, mod: f.lastModifiedDateTime, id: f.id }));
   files[2].sheet = k.ratSheet;
-  return { db, rep, files, loadedAt: new Date() };
+  return { db, rep, files, root: { driveId: root.parentReference.driveId, id: root.id }, loadedAt: new Date() };
+}
+
+/* ===== Pastas semanais ("snapshots") =====
+   Dentro da pasta de dados: <SNAP.folder>/<ano ISO>-W<semana>/ com
+     - snapshot.json: dados já processados pelo painel + textos do report daquela semana (base para comparar semanas)
+     - cópia dos 3 Excel de origem, como registro
+   A semana é a da última alteração dos arquivos (a mesma do cabeçalho). Enquanto a semana está em curso,
+   a pasta é atualizada sempre que as planilhas mudam; quando vira a semana, começa outra pasta e a anterior fica congelada. */
+const SNAP = Object.assign({ folder: 'BDMS_Semanas', auto: true, copyFiles: true }, CFG.snapshots || {});
+const SNAP_RE = /^(\d{4})-W(\d{2})$/;
+function isoWeekKey(d0) {
+  const d = new Date(Date.UTC(d0.getFullYear(), d0.getMonth(), d0.getDate())); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
+  const y = d.getUTCFullYear(), w = Math.ceil(((d - new Date(Date.UTC(y, 0, 1))) / 864e5 + 1) / 7);
+  return y + '-W' + String(w).padStart(2, '0');
+}
+const lastFileDate = files => files.reduce((a, f) => { const d = new Date(f.mod); return !a || d > a ? d : a; }, null);
+const enc = p => p.split('/').map(encodeURIComponent).join('/');
+async function itemByPath(token, root, path) {
+  try { return await graph(`/drives/${root.driveId}/items/${root.id}:/${enc(path)}`, token); }
+  catch (e) { if (e.status === 404) return null; throw e; }
+}
+async function ensureFolder(token, root, parentId, name, path) {
+  const ex = await itemByPath(token, root, path); if (ex) return ex;
+  try { return await (await graphSend('POST', `/drives/${root.driveId}/items/${parentId}/children`, token, { name, folder: {}, '@microsoft.graph.conflictBehavior': 'fail' })).json(); }
+  catch (e) { if (e.status === 409) return await itemByPath(token, root, path); throw e; }
+}
+/* Salva a semana corrente. Devolve {key, status: 'saved'|'uptodate'|'noperm'|'error'} */
+async function saveSnapshot(load, force) {
+  const key = isoWeekKey(lastFileDate(load.files));
+  try {
+    const token = await getToken(), root = load.root;
+    const base = await ensureFolder(token, root, root.id, SNAP.folder, SNAP.folder);
+    const wf = await ensureFolder(token, root, base.id, key, SNAP.folder + '/' + key);
+    if (!force) {
+      const cur = await itemByPath(token, root, `${SNAP.folder}/${key}/snapshot.json`);
+      if (cur && new Date(cur.lastModifiedDateTime) >= lastFileDate(load.files)) return { key, status: 'uptodate', at: new Date(cur.lastModifiedDateTime) };
+    }
+    const acc = msalApp.getActiveAccount() || {};
+    const snap = { version: 1, week: key, savedAt: new Date().toISOString(), savedBy: acc.name || acc.username || null,
+      files: load.files.map(f => ({ name: f.name, mod: f.mod, sheet: f.sheet || null })), rep: load.rep, db: load.db };
+    await graphSend('PUT', `/drives/${root.driveId}/items/${wf.id}:/snapshot.json:/content`, token, JSON.stringify(snap), 'application/json');
+    if (SNAP.copyFiles) {
+      /* cópia assíncrona no SharePoint (o Graph responde 202 e copia em segundo plano); substitui a cópia anterior da mesma semana */
+      await Promise.all(load.files.filter(f => f.id).map(f => graphSend('POST', `/drives/${root.driveId}/items/${f.id}/copy?@microsoft.graph.conflictBehavior=replace`, token,
+        { parentReference: { driveId: root.driveId, id: wf.id }, name: f.name }).catch(e => console.warn('cópia', f.name, e))));
+    }
+    return { key, status: 'saved', at: new Date() };
+  } catch (e) {
+    console.warn('snapshot', e);
+    return { key, status: e && e.status === 403 ? 'noperm' : 'error', msg: e && e.message };
+  }
+}
+/* Semanas salvas, da mais nova para a mais antiga */
+async function listSnapshots(load) {
+  const token = await getToken();
+  try {
+    const j = await graph(`/drives/${load.root.driveId}/items/${load.root.id}:/${enc(SNAP.folder)}:/children?$top=200&$select=name,id,folder,lastModifiedDateTime`, token);
+    return j.value.filter(i => i.folder && SNAP_RE.test(i.name)).sort((a, b) => b.name.localeCompare(a.name));
+  } catch (e) { if (e.status === 404) return []; throw e; }
+}
+async function readSnapshot(load, key) {
+  const token = await getToken();
+  const r = await fetch(`${GRAPH}/drives/${load.root.driveId}/items/${load.root.id}:/${enc(SNAP.folder + '/' + key + '/snapshot.json')}:/content`, { headers: { Authorization: 'Bearer ' + token } });
+  if (!r.ok) { const err = new DashError('snapMissing', { w: key }, 'file'); err.status = r.status; throw err; }
+  return r.json();
 }
 
 function friendlyError(e) {
@@ -1025,7 +1116,8 @@ function renderMeta(){
   $('#hSummaryT').textContent=REP.semana?t('hSummaryW',{w:REP.semana}):t('hSummary');
   const hh=LOAD.loadedAt; $('#mSrc').textContent=LOAD.srcErr?t('refreshFail',{m:LOAD.srcErr()}):t('source',{h:pad(hh.getHours())+':'+pad(hh.getMinutes())});
   const fl=LOAD.files.map(f=>t('fileLine',{n:f.name,d:new Date(f.mod).toLocaleString(LOC(),{dateStyle:'short',timeStyle:'short'})})+(f.sheet?t('sheetLine',{s:f.sheet}):''));
-  $('#foot').textContent=t('foot',{f:fl.join('; ')});
+  const sn=LOAD.snap, snTxt=!sn?'':sn.status==='saved'?t('snapSaved',{k:sn.key,h:pad(sn.at.getHours())+':'+pad(sn.at.getMinutes())}):sn.status==='uptodate'?t('snapUpToDate',{k:sn.key}):sn.status==='noperm'?t('snapNoPerm',{k:sn.key}):t('snapErr',{k:sn.key});
+  $('#foot').textContent=t('foot',{f:fl.join('; ')})+(snTxt?' '+snTxt:'');
 }
 function setLang(l){
   if(l===LANG) return; LANG=l; try{localStorage.setItem('lang',l)}catch(e){}
@@ -1047,6 +1139,7 @@ async function refresh(first){
     setupExec(); setupProj(); setupSup(); setupRma(); setupRisk(); BOUND=true;
     gateState=null; gate.hidden=true; app.hidden=false; $('#acts').hidden=false;
     if(first){let tb='exec'; try{tb=localStorage.getItem('tab')||'exec'}catch(e){} show(renders[tb]?tb:'exec');} else rerender();
+    if(SNAP.auto) saveSnapshot(d).then(r=>{ if(LOAD===d){ d.snap=r; renderMeta(); } });
   }catch(e){
     console.error(e);
     if(e&&e.kind==='login') gateMsg(()=>t('needLogin'),false,true);
@@ -1059,14 +1152,35 @@ $('#bOut').addEventListener('click',()=>msalApp.logoutRedirect({postLogoutRedire
 $('#bRefresh').addEventListener('click',()=>refresh(false));
 /* Exportar relatório: carrega a biblioteca de PowerPoint e o gerador só na primeira vez que alguém clica */
 const loadScript=src=>new Promise((ok,ko)=>{ if(document.querySelector(`script[src="${src}"]`)) return ok(); const el=document.createElement('script'); el.src=src; el.onload=ok; el.onerror=()=>ko(new Error(src)); document.head.appendChild(el); });
+/* Exportar: abre a escolha da semana (dados atuais ou uma semana salva) */
 $('#bExport').addEventListener('click',async()=>{
-  const b=$('#bExport'); if(b.disabled||!DB) return; b.disabled=true; b.textContent=t('exporting');
+  if(!DB||!LOAD) return;
+  const dlg=$('#dlgExport'), sel=$('#xWeek'), cur=isoWeekKey(lastFileDate(LOAD.files));
+  sel.innerHTML=`<option value="">${esc(t('xCurrent',{w:cur.slice(6)}))}</option>`; $('#xMsg').textContent=t('xLoading'); $('#xGo').disabled=false;
+  dlg.showModal();
+  try{
+    const list=(await listSnapshots(LOAD)).filter(f=>f.name!==cur);
+    list.forEach(f=>sel.insertAdjacentHTML('beforeend',`<option value="${esc(f.name)}">${esc(t('xWeekOpt',{w:+f.name.slice(6),y:f.name.slice(0,4),d:new Date(f.lastModifiedDateTime).toLocaleDateString(LOC())}))}</option>`));
+    $('#xMsg').textContent=list.length?'':t('xNoWeeks');
+  }catch(e){ console.warn(e); $('#xMsg').textContent=t('xListFail'); }
+});
+$('#xCancel').addEventListener('click',()=>$('#dlgExport').close());
+$('#xGo').addEventListener('click',async()=>{
+  const go=$('#xGo'), key=$('#xWeek').value; go.disabled=true; $('#xMsg').textContent=t('exporting');
+  const keep={DB,REP};
   try{
     if(typeof PptxGenJS==='undefined') await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
     if(typeof window.buildReport!=='function') await loadScript('report.js');
-    await window.buildReport();
-  }catch(e){ console.error(e); alert(t('exportFail',{m:e&&e.message||e})); }
-  finally{ b.disabled=false; b.textContent=t('export'); }
+    let opt={};
+    if(key){
+      /* semana salva: o relatório usa os dados e textos daquela semana */
+      const snap=await readSnapshot(LOAD,key); DB=snap.db; REP=snap.rep;
+      opt={week:+key.slice(6), date:lastFileDate(snap.files)};
+    }
+    await window.buildReport(opt);
+    $('#dlgExport').close();
+  }catch(e){ console.error(e); $('#xMsg').textContent=t('exportFail',{m:e&&e.key?t(e.key,e.vars):(e&&e.message||e)}); }
+  finally{ DB=keep.DB; REP=keep.REP; go.disabled=false; }
 });
 (async()=>{
   applyStyle();

@@ -98,9 +98,11 @@
   }
 
   /* ---------- montagem ---------- */
-  window.buildReport = async function () {
-    const D = collect(), now = new Date(), wk = LOAD && LOAD.files ? isoWeek(LOAD.files.reduce((a, f) => { const d = new Date(f.mod); return !a || d > a ? d : a; }, null)) : isoWeek(now);
-    const dt = now.toLocaleDateString(LOC(), LANG === 'pt' ? { day: '2-digit', month: '2-digit', year: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' });
+  /* opt.week / opt.date: semana e data dos dados (semana salva). Sem opt, usa os dados atuais. */
+  window.buildReport = async function (opt) {
+    opt = opt || {};
+    const D = collect(), now = new Date(), ref = opt.date || (LOAD && LOAD.files ? lastFileDate(LOAD.files) : now), wk = opt.week || isoWeek(ref);
+    const dt = ref.toLocaleDateString(LOC(), LANG === 'pt' ? { day: '2-digit', month: '2-digit', year: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' });
     const { CLS, LVL } = LB();
     const pres = new PptxGenJS();
     pres.layout = 'LAYOUT_WIDE';

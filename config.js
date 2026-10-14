@@ -22,6 +22,13 @@ window.DASH_CONFIG = {
   // então é pública por natureza; o limite de uso fica atrelado a ela.
   cartoKey: 'cb1_4jc3_1_a04365c9525a22a24b91dee0',
 
+  // Pastas semanais: cópia dos dados de cada semana, dentro da pasta de dados (para exportar semanas anteriores e comparar)
+  snapshots: {
+    folder: 'BDMS_Semanas',   // nome da pasta criada dentro da pasta de dados
+    auto: true,               // salva a semana corrente sempre que as planilhas mudam
+    copyFiles: true           // além do snapshot.json, guarda uma cópia dos Excel de origem
+  },
+
   // Recarrega os dados sozinho a cada N minutos (0 desliga)
   refreshMinutes: 10
 };
