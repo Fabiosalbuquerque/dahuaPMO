@@ -147,6 +147,32 @@ td .pill{white-space:normal;line-height:1.3;display:inline-block}
 .chip.primary{background:var(--s1);color:#fff;border-color:var(--s1);padding:10px 18px;font-size:16px}
 .chip[disabled]{opacity:.6;cursor:wait}
 [hidden]{display:none!important}
+dialog.dlg{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(560px,calc(100vw - 32px));box-shadow:0 10px 30px rgba(0,0,0,.25)}
+dialog.dlg::backdrop{background:rgba(10,27,48,.45)}
+dialog.dlg h2{font-size:20px;margin:0 0 12px}
+dialog.dlg form{display:grid;gap:10px}
+dialog.dlg label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+dialog.dlg input,dialog.dlg select,dialog.dlg textarea{font:15px var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:7px 9px;width:100%}
+dialog.dlg textarea{resize:vertical}
+dialog.dlg .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+dialog.dlg .xbtns{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+dialog.dlg .chip.primary{padding:7px 16px;font-size:15px}
+#rMsg.err,#uMsg.err{color:var(--brand)}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.phead h2{margin:0}
+.pill.src{color:var(--s1);margin-left:6px;font-size:11px}
+.hist{padding:6px 4px 10px;color:var(--ink)}
+.hist .hhead{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:8px}
+.hist .hhead .chip{margin-left:auto}
+.tl{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 12px 14px}
+.tl li::before{content:"";position:absolute;left:-23px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--s1);border:2px solid var(--panel)}
+.tl li.first::before{background:var(--s4)}
+.tl time{display:block;font:600 13px var(--cond);color:var(--muted)}
+.tl .who{font-weight:600}
+.tl p{margin:2px 0 0;white-space:pre-line;font-size:14px;line-height:1.45}
+.tl .meta{font-size:12px;color:var(--muted);margin-top:2px}
+@media (max-width:640px){dialog.dlg .row2{grid-template-columns:1fr}}
 dialog#dlgExport{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(440px,calc(100vw - 32px));box-shadow:0 10px 30px rgba(0,0,0,.25)}
 dialog#dlgExport::backdrop{background:rgba(10,27,48,.45)}
 dialog#dlgExport h2{font-size:20px;margin:0 0 12px}
@@ -328,18 +354,48 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 <section class="view" id="v-risk">
   <div class="panel"><h2 data-i18n="hHot"></h2>
     <div class="tblwrap paged"><table id="tHot"><thead><tr><th data-i18n="cProject"></th><th>Delivery PM</th><th data-i18n="cOpenRisk"></th><th data-i18n="cUpdated"></th></tr></thead><tbody></tbody></table></div></div>
-  <div class="panel mt"><h2><span data-i18n="hRat"></span><small>RAT</small></h2>
+  <div class="panel mt"><div class="phead"><h2><span data-i18n="hRat"></span><small>RAT</small></h2><button class="chip primary" id="bNewRisk" data-i18n="bNewRisk"></button></div>
     <div class="filters">
       <label>Status<select id="kS"><option value="Open" data-i18n="stOpen"></option><option value="" data-i18n="all"></option><option value="Closed" data-i18n="stClosed"></option></select></label>
       <label><span data-i18n="fImp"></span><select id="kI"><option value="" data-i18n="allF"></option><option value="High" data-i18n="impHigh"></option><option value="Medium" data-i18n="impMedium"></option><option value="Low" data-i18n="impLow"></option></select></label>
       <label><span data-i18n="cProject"></span><select id="kP"><option value="" data-i18n="all"></option></select></label>
     </div>
     <div class="grid g3" id="kKpis"></div>
-    <div class="tblwrap paged mt"><table id="tRat"><thead><tr><th data-i18n="cProject"></th><th data-i18n="cResp"></th><th data-i18n="cType"></th><th data-i18n="cTitle"></th><th data-i18n="fImp"></th><th>Aging</th><th data-i18n="cFup"></th></tr></thead><tbody></tbody></table></div>
+    <div class="tblwrap paged mt"><table id="tRat"><thead><tr><th data-i18n="cProject"></th><th data-i18n="cResp"></th><th data-i18n="cType"></th><th data-i18n="cTitle"></th><th data-i18n="fImp"></th><th>Aging</th><th data-i18n="cDue"></th><th data-i18n="cFup"></th></tr></thead><tbody></tbody></table></div>
     <p class="count" data-i18n="clickRow"></p>
   </div>
 </section>
 </main>
+<dialog id="dlgRisk" class="dlg" aria-labelledby="rTitle">
+  <h2 id="rTitle" data-i18n="dlgNewTitle"></h2>
+  <form id="fRisk" novalidate>
+    <label><span data-i18n="cProject"></span><input id="rProj" list="dlProj" autocomplete="off" required></label>
+    <label><span data-i18n="fOwner"></span><input id="rOwner" list="dlOwner" autocomplete="off" required></label>
+    <div class="row2">
+      <label><span data-i18n="fType"></span><select id="rType"><option value="Risk" data-i18n="tRisk"></option><option value="Issue" data-i18n="tIssue"></option></select></label>
+      <label><span data-i18n="fClass"></span><select id="rImp"><option value="High" data-i18n="impHigh"></option><option value="Medium" data-i18n="impMedium" selected></option><option value="Low" data-i18n="impLow"></option></select></label>
+    </div>
+    <label><span data-i18n="fDesc"></span><textarea id="rDesc" rows="4" required></textarea></label>
+    <label><span data-i18n="fDue"></span><input id="rDue" type="date" required></label>
+    <p class="count" id="rMsg" aria-live="polite"></p>
+    <div class="xbtns"><button type="button" class="chip" data-close data-i18n="xCancel"></button><button type="submit" class="chip primary" id="rSave" data-i18n="bSave"></button></div>
+  </form>
+</dialog>
+<dialog id="dlgUpd" class="dlg" aria-labelledby="uTitle">
+  <h2 id="uTitle" data-i18n="dlgUpdTitle"></h2>
+  <p class="count" id="uRisk"></p>
+  <form id="fUpd" novalidate>
+    <label><span data-i18n="fUpdText"></span><textarea id="uText" rows="4" required></textarea></label>
+    <div class="row2">
+      <label><span data-i18n="fUpdDate"></span><input id="uDate" type="date" required></label>
+      <label><span>Status</span><select id="uSt"><option value="" id="uKeep"></option><option value="Open" data-i18n="stOpen1"></option><option value="Closed" data-i18n="stClosed1"></option></select></label>
+    </div>
+    <label><span data-i18n="fNewDue"></span><input id="uDue" type="date"></label>
+    <p class="count" id="uMsg" aria-live="polite"></p>
+    <div class="xbtns"><button type="button" class="chip" data-close data-i18n="xCancel"></button><button type="submit" class="chip primary" id="uSave" data-i18n="bUpdate"></button></div>
+  </form>
+</dialog>
+<datalist id="dlProj"></datalist><datalist id="dlOwner"></datalist>
 <dialog id="dlgExport" aria-labelledby="xTitle">
   <h2 id="xTitle" data-i18n="xTitle"></h2>
   <label class="xlbl"><span data-i18n="xWeekLbl"></span><select id="xWeek"></select></label>
@@ -348,9 +404,9 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 </dialog>
 <footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
-<script>window.APP_VERSION="2026.10.14-2";</script>
-<script src="config.js?v=2026.10.14-2"></script>
-<script src="insights.js?v=2026.10.14-2"></script>
+<script>window.APP_VERSION="2026.10.16-1";</script>
+<script src="config.js?v=2026.10.16-1"></script>
+<script src="insights.js?v=2026.10.16-1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
@@ -362,6 +418,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 const I18N = {
 pt: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Seções', styleAria:'Estilo visual', stPanel:'Painel', stReport:'Relatório D&S',
+  bNewRisk:'+ Novo risco', dlgNewTitle:'Registrar novo risco', fOwner:'PM responsável', fClass:'Classificação', fDesc:'Descrição do risco', fDue:'Data estimada de resolução', bSave:'Salvar', saving:'Salvando…', reqFields:'Preencha projeto, PM, descrição e data estimada de resolução.', saveFail:'Não foi possível salvar: {m}', noWritePerm:'Sua conta não tem permissão de edição na pasta de dados do SharePoint.', fileLocked:'O arquivo de riscos está bloqueado por outra pessoa. Tente de novo em instantes.', riskTplMissing:'O modelo BDMS_Riscos_template.xlsx não foi encontrado no site do painel.', dlgUpdTitle:'Atualizar risco', fUpdText:'Atualização', fUpdDate:'Data', keepStatus:'Manter ({s})', fNewDue:'Nova data estimada (opcional)', bUpdate:'Atualizar risco', updReq:'Escreva a atualização e a data.', stOpen1:'Em aberto', stClosed1:'Fechado', hRegRat:'Registro no RAT', hRegNew:'Risco registrado no painel', dueLbl:'Previsão de resolução: {d}', histCount:'{n} atualizações no histórico', histCount1:'1 atualização no histórico', noHist:'Sem atualizações registradas no painel', stChange:'Status: {s}', newDueTxt:'Nova previsão: {d}', cDue:'Prev. resolução', srcPanel:'Painel',
   export:'Exportar relatório', exporting:'Gerando…', xTitle:'Exportar relatório semanal', xWeekLbl:'Semana dos dados', xCurrent:'Dados atuais (semana {w})', xWeekOpt:'Semana {w} de {y}, salva em {d}', xLoading:'Buscando semanas salvas…', xNoWeeks:'Ainda não há semanas anteriores salvas.', xListFail:'Não foi possível listar as semanas salvas. Dá pra exportar os dados atuais.', xCancel:'Cancelar', snapMissing:'Não encontrei os dados da semana {w} (snapshot.json).', snapSaved:'Semana {k} salva no SharePoint às {h}.', snapUpToDate:'Semana {k} já está salva no SharePoint.', snapNoPerm:'Semana {k} não foi salva: sua conta não tem permissão de edição na pasta.', snapErr:'Não foi possível salvar a semana {k} no SharePoint.', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Riscos em aberto nos Major Projects',
   weekLine:'Semana <strong>{w}</strong> · dados atualizados em <strong>{d}</strong> às {h}', weekTip:'Última alteração nos arquivos da pasta: {n}', hSummaryW:'Resumo da semana {w}',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
@@ -402,10 +459,11 @@ pt: {
   hHot:'Riscos em aberto nos Major Projects', cRiskIssue:'Risco ou issue', cSituation:'Situação', hRat:'Registro de riscos e issues',
   stOpen:'Em aberto', stClosed:'Fechados', fImp:'Importância', impHigh:'Alta', impMedium:'Média', impLow:'Baixa',
   kImpHigh:'Importância alta', kOver30r:'Com mais de 30 dias', kProjInv:'Projetos envolvidos', cTitle:'Título', cFup:'Último follow-up',
-  tRisk:'Risco', tIssue:'Issue', agClosed:'Fechado', noProg:'Sem andamento registrado.', noRat:'Nenhum registro com esses filtros.', clickRow:'Clique numa linha para ver o andamento.'
+  tRisk:'Risco', tIssue:'Issue', agClosed:'Fechado', noProg:'Sem andamento registrado.', noRat:'Nenhum registro com esses filtros.', clickRow:'Clique numa linha para ver o histórico e atualizar o risco.'
 },
 en: {
   title:'Brazil Delivery Management System', gateTitle:'Brazil Delivery Management System', tabsAria:'Sections', styleAria:'Visual style', stPanel:'Dashboard', stReport:'D&S report',
+  bNewRisk:'+ New risk', dlgNewTitle:'Register a new risk', fOwner:'Owner PM', fClass:'Classification', fDesc:'Risk description', fDue:'Estimated resolution date', bSave:'Save', saving:'Saving…', reqFields:'Fill in project, PM, description and estimated resolution date.', saveFail:'Could not save: {m}', noWritePerm:'Your account has no edit permission on the SharePoint data folder.', fileLocked:'The risk file is locked by someone else. Try again in a moment.', riskTplMissing:'The BDMS_Riscos_template.xlsx template was not found on the dashboard site.', dlgUpdTitle:'Update risk', fUpdText:'Update', fUpdDate:'Date', keepStatus:'Keep ({s})', fNewDue:'New estimated date (optional)', bUpdate:'Update risk', updReq:'Write the update and the date.', stOpen1:'Open', stClosed1:'Closed', hRegRat:'RAT entry', hRegNew:'Risk registered in the dashboard', dueLbl:'Estimated resolution: {d}', histCount:'{n} updates in the history', histCount1:'1 update in the history', noHist:'No updates recorded in the dashboard', stChange:'Status: {s}', newDueTxt:'New estimate: {d}', cDue:'Est. resolution', srcPanel:'Dashboard',
   export:'Export report', exporting:'Generating…', xTitle:'Export weekly report', xWeekLbl:'Data week', xCurrent:'Current data (week {w})', xWeekOpt:'Week {w} of {y}, saved on {d}', xLoading:'Looking for saved weeks…', xNoWeeks:'No previous weeks saved yet.', xListFail:'Could not list the saved weeks. You can still export the current data.', xCancel:'Cancel', snapMissing:'Could not find the data for week {w} (snapshot.json).', snapSaved:'Week {k} saved to SharePoint at {h}.', snapUpToDate:'Week {k} is already saved to SharePoint.', snapNoPerm:'Week {k} was not saved: your account has no edit permission on the folder.', snapErr:'Could not save week {k} to SharePoint.', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Open risks on Major Projects',
   weekLine:'Week <strong>{w}</strong> · data updated on <strong>{d}</strong> at {h}', weekTip:'Latest change in the folder files: {n}', hSummaryW:'Week {w} summary',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
@@ -446,7 +504,7 @@ en: {
   hHot:'Open risks on Major Projects', cRiskIssue:'Risk or issue', cSituation:'Status', hRat:'Risk and issue log',
   stOpen:'Open', stClosed:'Closed', fImp:'Importance', impHigh:'High', impMedium:'Medium', impLow:'Low',
   kImpHigh:'High importance', kOver30r:'Older than 30 days', kProjInv:'Projects involved', cTitle:'Title', cFup:'Last follow-up',
-  tRisk:'Risk', tIssue:'Issue', agClosed:'Closed', noProg:'No progress recorded.', noRat:'No records match these filters.', clickRow:'Click a row to see the progress.'
+  tRisk:'Risk', tIssue:'Issue', agClosed:'Closed', noProg:'No progress recorded.', noRat:'No records match these filters.', clickRow:'Click a row to see the history and update the risk.'
 }};
 const LABELS = {
   pt: { MES:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
@@ -641,9 +699,10 @@ function parseRiscos(wb) {
   if (!name) throw new DashError('errRat', null, 'file');
   const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: null, raw: true }).slice(1);
   const risks = rows.filter(r => r[1] || r[4]).map(r => {
-    const o = { owner: clean(r[0]), project: clean(r[1]), imp: clean(r[2]), type: clean(r[3]), title: clean(r[4]), prog: clean(r[5]), st: clean(r[9]), ag: clean(r[14]), fup: clean(r[15]) };
+    const o = { owner: clean(r[0]), project: clean(r[1]), imp: clean(r[2]), type: clean(r[3]), title: clean(r[4]), prog: clean(r[5]), st: clean(r[9]), ag: clean(r[14]), fup: clean(r[15]),
+      created: clean(r[10]), due: clean(r[11]) };
     if (o.imp) o.imp = String(o.imp).trim();
-    if (o.prog && String(o.prog).length > 400) o.prog = String(o.prog).slice(0, 400) + '…';
+    if (o.prog && String(o.prog).length > 2000) o.prog = String(o.prog).slice(0, 2000) + '…';
     if (o.prog) o.prog = String(o.prog);
     return o;
   });
@@ -661,11 +720,67 @@ async function loadData() {
   ]);
   const rep = null;   // os textos da semana agora são gerados pela análise automática (insights.js)
   const k = parseRiscos(wK);
-  const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { risks: k.risks });
+  /* riscos registrados pelo painel (BDMS_Riscos.xlsx): opcional, só existe depois do primeiro registro */
+  const fRisk = items.find(i => i.file && i.name.toLowerCase() === RISK_FILE.toLowerCase());
+  const book = fRisk ? parseRiskBook(await readWorkbook(fRisk, token, ['Risks', 'RiskUpdates'])) : { risks: [], updates: [] };
+  const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { ratRaw: k.risks, riskBook: book });
+  db.risks = mergeRisks(db);
   const files = [fP, fR, fK].map(f => ({ name: f.name, mod: f.lastModifiedDateTime, id: f.id }));
   files[2].sheet = k.ratSheet;
   return { db, rep, files, root: { driveId: root.parentReference.driveId, id: root.id }, loadedAt: new Date() };
 }
+
+/* ===== Riscos registrados pelo painel =====
+   Arquivo BDMS_Riscos.xlsx na pasta de dados, com duas tabelas do Excel:
+     Risks        – um risco novo por linha (nunca é alterada depois de criada)
+     RiskUpdates  – uma atualização por linha: texto, e opcionalmente novo status e nova data estimada
+   Vale para os riscos novos e para os que já estão no RAT (Project Database), ligados pelo ID.
+   O status e a previsão que aparecem no painel são os da última atualização que os informou. */
+const RISK_FILE = CFG.riskFile || 'BDMS_Riscos.xlsx';
+const hash36 = s => { let h = 5381; for (const ch of String(s)) h = ((h << 5) + h + ch.charCodeAt(0)) >>> 0; return h.toString(36).toUpperCase(); };
+const normTxt = v => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const ratId = r => 'RAT-' + hash36(normTxt(r.project) + '|' + normTxt(r.title));
+function parseRiskBook(wb) {
+  const rows = (name, mp) => wb.Sheets[name] ? mapRows(wb.Sheets[name], mp) : [];
+  const risks = rows('Risks', { id: 'ID', project: 'Project', owner: 'Owner', type: 'Type', title: 'Description', imp: 'Importance', st: 'Status', due: 'Due Date', created: 'Created', createdBy: 'Created By' }).filter(r => r.id);
+  const updates = rows('RiskUpdates', { rid: 'Risk ID', date: 'Date', author: 'Author', text: 'Update', st: 'Status', due: 'Due Date' }).filter(u => u.rid);
+  updates.forEach((u, i) => u.seq = i);
+  return { risks, updates };
+}
+const ageBucket = (from, ref) => { const d = toDate(from); if (!d) return null; const n = daysBetween(ref || new Date(), d); return n > 30 ? '> 30 days' : n >= 8 ? '08 ~ 30 days' : '0~7 days'; };
+/* Junta RAT + riscos novos e aplica o histórico de atualizações */
+function mergeRisks(db) {
+  const book = db.riskBook || { risks: [], updates: [] }, hist = {};
+  book.updates.forEach(u => (hist[u.rid] = hist[u.rid] || []).push(u));
+  Object.values(hist).forEach(l => l.sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || a.seq - b.seq));
+  const out = (db.ratRaw || []).map(r => Object.assign({}, r, { id: ratId(r), src: 'rat' }));
+  book.risks.forEach(r => out.push({ id: r.id, src: 'bdms', project: r.project, owner: r.owner, type: r.type || 'Risk', title: r.title, imp: r.imp || 'Medium',
+    st: r.st || 'Open', due: r.due, created: r.created, createdBy: r.createdBy, prog: null, fup: r.created, ag: null }));
+  out.forEach(r => {
+    const h = hist[r.id] || []; r.hist = h;
+    h.forEach(u => { if (u.st) r.st = u.st; if (u.due) r.due = u.due; if (u.date && (!r.fup || String(u.date) > String(r.fup))) r.fup = u.date; });
+    if (r.st === 'Closed') r.ag = 'Closed';
+    else if (r.src === 'bdms' || (h.length && r.ag === 'Closed')) r.ag = ageBucket(r.created, new Date()) || r.ag;
+  });
+  return out;
+}
+/* Escrita: garante o arquivo (cria a partir do modelo na primeira vez) e acrescenta uma linha na tabela */
+async function riskFileItem(token) {
+  const root = LOAD.root;
+  let it = await itemByPath(token, root, RISK_FILE);
+  if (it) return it;
+  const tpl = await fetch('BDMS_Riscos_template.xlsx?v=' + window.APP_VERSION);
+  if (!tpl.ok) throw new DashError('riskTplMissing', null, 'file');
+  const r = await graphSend('PUT', `/drives/${root.driveId}/items/${root.id}:/${encodeURIComponent(RISK_FILE)}:/content?@microsoft.graph.conflictBehavior=fail`, token, await tpl.blob(),
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  return r.json();
+}
+async function appendRiskRow(table, values) {
+  const token = await getToken(), it = await riskFileItem(token);
+  await graphSend('POST', `/drives/${LOAD.root.driveId}/items/${it.id}/workbook/tables/${table}/rows`, token, { values: [values] });
+}
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const meName = () => { const a = msalApp.getActiveAccount() || {}; return a.name || a.username || ''; };
 
 /* ===== Pastas semanais ("snapshots") =====
    Dentro da pasta de dados: <SNAP.folder>/<ano ISO>-W<semana>/ com
@@ -1081,8 +1196,11 @@ function setupRisk(){
   renderHot();
   if(BOUND) return;
   ['#kS','#kI','#kP'].forEach(s=>$(s).addEventListener('change',renderRisk));
-  $('#tRat tbody').addEventListener('click',e=>{const tr=e.target.closest('tr[data-i]');if(!tr)return;const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('exp')){nx.remove();return;}
-    const r=DB.risks[+tr.dataset.i];tr.insertAdjacentHTML('afterend',`<tr class="exp"><td class="detail" colspan="7">${esc(r.prog||t('noProg'))}</td></tr>`);});
+  $('#tRat tbody').addEventListener('click',e=>{
+    const ub=e.target.closest('[data-upd]'); if(ub){ e.stopPropagation(); openUpdate(ub.dataset.upd); return; }
+    const tr=e.target.closest('tr[data-i]');if(!tr)return;const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('exp')){nx.remove();return;}
+    tr.insertAdjacentHTML('afterend',`<tr class="exp"><td colspan="8">${histHtml(DB.risks[+tr.dataset.i])}</td></tr>`);});
+  $('#bNewRisk').addEventListener('click',openNewRisk);
 }
 function renderRisk(){
   renderHot();
@@ -1092,9 +1210,78 @@ function renderRisk(){
     .map(([n,l])=>`<div class="panel kpi"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
   const ic=v=>v==='High'?'hi':v==='Medium'?'md':'lo', IMP={High:t('impHigh'),Medium:t('impMedium'),Low:t('impLow')};
   const AG={'> 30 days':t('age3'),'08 ~ 30 days':t('age2'),'0~7 days':t('age1'),'Closed':t('agClosed')};
-  rows.sort((a,b)=>['High','Medium','Low'].indexOf(a.imp)-['High','Medium','Low'].indexOf(b.imp));
-  paged('tRat',rows.map(r=>`<tr data-i="${r.i}" style="cursor:pointer"><td>${esc(r.project)}</td><td>${esc(r.owner)}</td><td>${r.type==='Risk'?t('tRisk'):t('tIssue')}</td><td>${esc(r.title)}</td><td><span class="pill ${ic(r.imp)}">${IMP[r.imp]||esc(r.imp)}</span></td><td>${esc(AG[r.ag]||r.ag)}</td><td>${fdate(r.fup)}</td></tr>`),`<tr><td colspan="7">${t('noRat')}</td></tr>`);
+  /* importância e, dentro dela, o que foi registrado ou atualizado mais recentemente primeiro */
+  rows.sort((a,b)=>(['High','Medium','Low'].indexOf(a.imp)-['High','Medium','Low'].indexOf(b.imp))||String(b.fup||'').localeCompare(String(a.fup||'')));
+  paged('tRat',rows.map(r=>`<tr data-i="${r.i}" style="cursor:pointer"><td>${esc(r.project)}</td><td>${esc(r.owner)}</td><td>${r.type==='Risk'?t('tRisk'):t('tIssue')}</td><td>${esc(r.title)}${r.src==='bdms'?`<span class="pill src">${t('srcPanel')}</span>`:''}${r.hist&&r.hist.length?`<span class="pill src" title="${esc(t('histCount',{n:r.hist.length}))}">↻ ${r.hist.length}</span>`:''}</td><td><span class="pill ${ic(r.imp)}">${IMP[r.imp]||esc(r.imp)}</span></td><td>${esc(AG[r.ag]||r.ag||'–')}</td><td>${fdate(r.due)}</td><td>${fdate(r.fup)}</td></tr>`),`<tr><td colspan="8">${t('noRat')}</td></tr>`);
 }
+
+/* Histórico do risco em ordem cronológica: registro inicial e depois cada atualização */
+function histHtml(r){
+  const items=[];
+  if(r.src==='rat') items.push({cls:'first',date:r.created&&/^\d{4}-/.test(r.created)?r.created:null,who:t('hRegRat'),text:r.prog||t('noProg')});
+  else items.push({cls:'first',date:r.created,who:t('hRegNew')+(r.createdBy?' · '+r.createdBy:''),text:r.title});
+  (r.hist||[]).forEach(u=>items.push({date:u.date,who:u.author||'–',text:u.text,meta:[u.st?t('stChange',{s:u.st==='Closed'?t('stClosed1'):t('stOpen1')}):null,u.due?t('newDueTxt',{d:fdate(u.due)}):null].filter(Boolean).join(' · ')}));
+  return `<div class="hist"><div class="hhead"><span>${esc(t('dueLbl',{d:fdate(r.due)}))}</span><span>${r.hist&&r.hist.length?esc(t(r.hist.length===1?'histCount1':'histCount',{n:r.hist.length})):esc(t('noHist'))}</span><button class="chip" data-upd="${esc(r.id)}">${t('bUpdate')}</button></div>
+    <ol class="tl">${items.map(x=>`<li class="${x.cls||''}"><time>${x.date?fdate(x.date):'RAT'}</time><span class="who">${esc(x.who)}</span><p>${esc(x.text||'')}</p>${x.meta?`<div class="meta">${esc(x.meta)}</div>`:''}</li>`).join('')}</ol></div>`;
+}
+/* ---- registrar novo risco ---- */
+function fillLists(){
+  const proj=new Set(), own=new Set();
+  DB.risks.forEach(r=>{ if(r.project) proj.add(String(r.project).trim()); if(r.owner) own.add(cleanName(String(r.owner).trim())); });
+  (DB.major||[]).filter(m=>/^win$/i.test(m.status||'')).forEach(m=>{ proj.add(m.name); if(m.pm) own.add(cleanName(m.pm)); });
+  DB.projects.filter(p=>ACTIVE.includes(p.c)).forEach(p=>{ const n=p.n||p.cn; if(n) proj.add(String(n).trim()); });
+  ((INS&&INS.portfolio)||[]).forEach(o=>own.add(o.name));
+  /* um nome por pessoa (a grafia mais curta), sem valores que não são pessoas */
+  const byKey={}; [...own].filter(n=>n&&!/legal|dispute|tbd/i.test(n)).forEach(n=>{ const k=personKey(n); if(!byKey[k]||n.length<byKey[k].length) byKey[k]=n; });
+  $('#dlProj').innerHTML=[...proj].sort((a,b)=>a.localeCompare(b)).map(p=>`<option value="${esc(p)}"></option>`).join('');
+  $('#dlOwner').innerHTML=Object.values(byKey).sort((a,b)=>a.localeCompare(b)).map(p=>`<option value="${esc(p)}"></option>`).join('');
+}
+function openNewRisk(){
+  fillLists(); $('#fRisk').reset(); $('#rImp').value='Medium'; $('#rMsg').textContent=''; $('#rMsg').classList.remove('err'); $('#rSave').disabled=false;
+  const me=meName(); if(me) $('#rOwner').value=Object.values([...$('#dlOwner').options].map(o=>o.value)).find(n=>personKey(n)===personKey(me))||'';
+  $('#dlgRisk').showModal(); $('#rProj').focus();
+}
+function writeErr(e){ return e&&e.status===403?t('noWritePerm'):e&&e.status===423?t('fileLocked'):t('saveFail',{m:e&&e.key?t(e.key,e.vars):(e&&e.message||e)}); }
+function afterRiskChange(){ DB.risks=mergeRisks(DB); INS=null; rebuildInsights(); if(LOAD) LOAD.ins=INS; setupRisk(); renderRisk(); }
+$('#fRisk').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const v={project:$('#rProj').value.trim(),owner:$('#rOwner').value.trim(),type:$('#rType').value,title:$('#rDesc').value.trim(),imp:$('#rImp').value,due:$('#rDue').value};
+  const msg=$('#rMsg'); msg.classList.remove('err');
+  if(!v.project||!v.owner||!v.title||!v.due){ msg.textContent=t('reqFields'); msg.classList.add('err'); return; }
+  const b=$('#rSave'); b.disabled=true; msg.textContent=t('saving');
+  const row={id:'R-'+Date.now().toString(36).toUpperCase(),project:v.project,owner:v.owner,type:v.type,title:v.title,imp:v.imp,st:'Open',due:v.due,created:todayISO(),createdBy:meName()};
+  try{
+    await appendRiskRow('Risks',[row.id,row.project,row.owner,row.type,row.title,row.imp,row.st,row.due,row.created,row.createdBy]);
+    DB.riskBook.risks.push(row); afterRiskChange();
+    $('#dlgRisk').close(); $('#kS').value='Open';
+  }catch(err){ console.error(err); msg.textContent=writeErr(err); msg.classList.add('err'); }
+  finally{ b.disabled=false; }
+});
+/* ---- atualizar risco (novo ou do RAT): acrescenta uma linha ao histórico ---- */
+let updId=null;
+function openUpdate(id){
+  const r=DB.risks.find(x=>x.id===id); if(!r) return; updId=id;
+  $('#fUpd').reset(); $('#uDate').value=todayISO(); $('#uMsg').textContent=''; $('#uMsg').classList.remove('err'); $('#uSave').disabled=false;
+  $('#uRisk').textContent=`${r.project||''} · ${r.title||''}`;
+  $('#uKeep').textContent=t('keepStatus',{s:r.st==='Closed'?t('stClosed1'):t('stOpen1')});
+  $('#dlgUpd').showModal(); $('#uText').focus();
+}
+$('#fUpd').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const u={rid:updId,date:$('#uDate').value,author:meName(),text:$('#uText').value.trim(),st:$('#uSt').value||null,due:$('#uDue').value||null};
+  const msg=$('#uMsg'); msg.classList.remove('err');
+  if(!u.text||!u.date){ msg.textContent=t('updReq'); msg.classList.add('err'); return; }
+  const b=$('#uSave'); b.disabled=true; msg.textContent=t('saving');
+  try{
+    await appendRiskRow('RiskUpdates',[u.rid,u.date,u.author,u.text,u.st||'',u.due||'']);
+    u.seq=DB.riskBook.updates.length; DB.riskBook.updates.push(u); afterRiskChange();
+    $('#dlgUpd').close();
+    /* reabre o histórico do risco atualizado */
+    const i=DB.risks.findIndex(x=>x.id===u.rid), tr=document.querySelector(`#tRat tr[data-i="${i}"]`); if(tr) tr.click();
+  }catch(err){ console.error(err); msg.textContent=writeErr(err); msg.classList.add('err'); }
+  finally{ b.disabled=false; }
+});
+$$('dialog.dlg [data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 /* ===== Navegação, tema e idioma ===== */
 const renders={exec:renderExec,proj:renderProj,sup:renderSup,rma:renderRma,risk:renderRisk};
