@@ -184,6 +184,35 @@
       if (D.majors.length > 13) s.addText(t('rpMore', { n: D.majors.length - 13 }), { x: M, y: 6.75, w: CW, h: 0.25, isTextBox: true, fontFace: FONT, fontSize: 9, color: COL.muted, margin: 0 });
     }
 
+    /* 3b. Project SellOut (resumo calculado pela análise da semana; existe quando há o arquivo de sell-out) */
+    const SOI = weekInsights(ref).sellout;
+    if (SOI) {
+      const s = slide(t('tabSo'), t('tabSo'));
+      const y = SOI.ytd, ML = LB().MES;
+      kpis(s, [[t('soK1', { y: SOI.y }), usd(SOI.total), t('soK1d', { p: usd(SOI.prj), s: usd(SOI.svc) })], [t('soK2'), fmt(SOI.opps)],
+        [t('soK3'), usd(SOI.open), SOI.openOld ? t('soK3d', { v: usd(SOI.openOld) }) : ''],
+        y && y.pct != null ? [t('soK4', { m1: ML[0], m2: ML[y.lastMo - 1], py: SOI.y - 1 }), (y.pct > 0 ? '+' : '') + y.pct + '%', t('soK4d', { a: usd(y.a), b: usd(y.b) })] : [t('soK4n'), '–']], 1.05, 1.2);
+      const wl = 7.9, wr = CW - wl - 0.2, n = Math.max(1, SOI.lastMo), labels = ML.slice(0, n);
+      card(s, M, 2.42, wl, 2.28);
+      s.addChart(pres.charts.BAR, [{ name: String(SOI.y), labels, values: SOI.months.slice(0, n).map(v => Math.round(v / 1e3)) },
+        ...(SOI.prev ? [{ name: String(SOI.y - 1), labels, values: SOI.prev.slice(0, n).map(v => Math.round(v / 1e3)) }] : [])],
+        chartOpts(M + 0.05, 2.47, wl - 0.1, 2.18, t('rpSoMonth', { y: SOI.y, p: SOI.y - 1 }), { barDir: 'col', barGrouping: 'clustered', dataLabelPosition: 'outEnd', dataLabelFontSize: 7 }));
+      card(s, M + wl + 0.2, 2.42, wr, 4.53);
+      s.addText(t('hSoMap').toUpperCase(), { x: M + wl + 0.4, y: 2.5, w: wr - 0.4, h: 0.32, isTextBox: true, fontFace: FONT, fontSize: 12, bold: true, color: COL.navy, margin: 0 });
+      const tot = SOI.total || 1;
+      table(s, ['UF', t('rpState'), 'USD', '%'], [...SOI.ufs.map(([u, v]) => [u, UF_NAME[u] || u, usd(v), Math.round(v / tot * 100) + '%']), ...(SOI.noUf ? [['–', t('soNoUf'), usd(SOI.noUf), Math.round(SOI.noUf / tot * 100) + '%']] : [])],
+        M + wl + 0.35, 2.9, wr - 0.3, [0.5, 1.85, 1.05, 0.7], 9);
+      const half = (wl - 0.2) / 2;
+      card(s, M, 4.8, half, 2.15); card(s, M + half + 0.2, 4.8, half, 2.15);
+      s.addText(t('rpSoTop', { y: SOI.y }).toUpperCase(), { x: M + 0.2, y: 4.88, w: half - 0.4, h: 0.3, isTextBox: true, fontFace: FONT, fontSize: 11, bold: true, color: COL.navy, margin: 0 });
+      table(s, [t('soOpp'), 'UF', 'USD'], SOI.top.slice(0, 5).map(([nm, u, v]) => [trunc(nm, 34), u, usd(v)]), M + 0.15, 5.22, half - 0.3, [2.55, 0.45, 0.85], 8);
+      s.addText(t('rpSoMajor').toUpperCase(), { x: M + half + 0.4, y: 4.88, w: half - 0.4, h: 0.3, isTextBox: true, fontFace: FONT, fontSize: 11, bold: true, color: COL.navy, margin: 0 });
+      if (SOI.majors.length) table(s, [t('cProject'), t('cValue'), 'Sell-out', '%'], SOI.majors.slice(0, 5).map(([nm, v, so, p]) => [trunc(nm, 22), usd(v), usd(so), p + '%']),
+        M + half + 0.35, 5.22, half - 0.3, [1.75, 0.8, 0.8, 0.5], 8);
+      else s.addText('–', { x: M + half + 0.4, y: 5.3, w: half - 0.4, h: 0.3, isTextBox: true, fontFace: FONT, fontSize: 10, color: COL.muted, margin: 0 });
+      s.addNotes(t('soSrc'));
+    }
+
     /* 4. Suporte técnico */
     {
       const s = slide(t('rpSecSup'), t('rpSecSup'));

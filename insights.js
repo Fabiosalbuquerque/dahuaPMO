@@ -16,6 +16,16 @@ const INS_TXT = {
   pt: {
     summary: 'Semana {w}: {created} projetos importados em {y}, com {active} ativos ({tob} ToB e {tog} ToG) somando {val} em contratos. No suporte, {cc} contatos no call center no ano e {itr} ITRs locais de suporte técnico. Em RMA, {rma} casos no ano, {open} em aberto{old}.',
     summaryOld: ', {n} deles há mais de 30 dias',
+    summarySo: ' Em sell-out de projetos, {v} em {y} ({n} oportunidades com pedido).',
+    hSoUp: 'Sell-out de projetos de {m1} a {m2}: {a}, {p}% acima do mesmo período de {py} ({b}).',
+    hSoDown: 'Sell-out de projetos de {m1} a {m2}: {a}, {p}% abaixo do mesmo período de {py} ({b}).',
+    xSoDown: 'Revisar com o comercial o funil de pedidos de projeto para fechar a diferença de {v} contra {py}.',
+    hSoConc: 'As 5 maiores oportunidades concentram {p}% do sell-out de {y} ({v}), a maior é {top}.',
+    hSoUf: '{uf} lidera o sell-out de {y} com {v} ({p}% do valor com estado identificado).',
+    aSoOpen: '{v} em pedidos de projeto aguardam embarque; {o} deles há mais de 60 dias, em {n} oportunidades.',
+    xSoOpen: 'Cobrar a liberação dos pedidos parados há mais de 60 dias: {list}.',
+    aSoMajor: '{n} Major Projects ganhos têm menos de 30% do valor em sell-out: {list}.',
+    xSoMajor: 'Confirmar com os PMs o cronograma de pedidos de {list}.',
     hRmaDown: 'RMAs de {m1} a {m2}: {a}, {p}% abaixo do mesmo período de {py} ({b}).',
     hRmaUp: 'RMAs de {m1} a {m2}: {a}, {p}% acima do mesmo período de {py} ({b}).',
     hEng: 'Tickets de engenharia nas últimas 4 semanas: {a}, {d} em relação às 4 anteriores ({b}).',
@@ -52,6 +62,16 @@ const INS_TXT = {
   en: {
     summary: 'Week {w}: {created} projects imported in {y}, {active} of them active ({tob} ToB and {tog} ToG) with {val} in contracts. Support handled {cc} call center contacts this year and {itr} local technical support ITRs. RMA: {rma} cases this year, {open} open{old}.',
     summaryOld: ', {n} of them for more than 30 days',
+    summarySo: ' Project sell-out reached {v} in {y} ({n} opportunities with orders).',
+    hSoUp: 'Project sell-out from {m1} to {m2}: {a}, {p}% above the same period of {py} ({b}).',
+    hSoDown: 'Project sell-out from {m1} to {m2}: {a}, {p}% below the same period of {py} ({b}).',
+    xSoDown: 'Review the project order pipeline with sales to close the {v} gap against {py}.',
+    hSoConc: 'The top 5 opportunities account for {p}% of {y} sell-out ({v}); the largest is {top}.',
+    hSoUf: '{uf} leads {y} sell-out with {v} ({p}% of the value with an identified state).',
+    aSoOpen: '{v} in project orders are awaiting shipment; {o} of it for more than 60 days, across {n} opportunities.',
+    xSoOpen: 'Push for release of the orders held for more than 60 days: {list}.',
+    aSoMajor: '{n} won Major Projects have less than 30% of their value in sell-out: {list}.',
+    xSoMajor: 'Confirm the order schedule of {list} with the PMs.',
     hRmaDown: 'RMAs from {m1} to {m2}: {a}, {p}% below the same period of {py} ({b}).',
     hRmaUp: 'RMAs from {m1} to {m2}: {a}, {p}% above the same period of {py} ({b}).',
     hEng: 'Engineering tickets in the last 4 weeks: {a}, {d} versus the previous 4 ({b}).',
@@ -95,6 +115,13 @@ const listNames = (arr, n) => arr.slice(0, n).join(', ') + (arr.length > n ? ' +
 const signed = (d, isPct) => (d > 0 ? '+' : d < 0 ? '−' : '') + (isPct ? Math.abs(d) + '%' : fmt(Math.abs(d)));
 
 /* Métricas da semana: números que entram nas frases e que ficam salvos (metrics.json) para comparar semanas */
+/* sell-out: ano mais recente da base, valor total, oportunidades e pedidos aguardando embarque */
+function soMetrics(S, ref) {
+  if (!S || !S.length || typeof soYears !== 'function') return {};
+  const Y = soYears(S)[0], yr = S.filter(r => r.y === Y), open = yr.filter(r => r.st === 'open');   // mesmo recorte do painel (ano mais recente)
+  return { soY: Y, soTotal: Math.round(yr.reduce((a, r) => a + r.amt, 0)), soOpps: new Set(yr.map(r => r.opp || r.on)).size,
+    soOpen: Math.round(open.reduce((a, r) => a + r.amt, 0)), soOpenOld: Math.round(open.filter(r => r.d && daysBetween(ref, toDate(r.d)) > 60).reduce((a, r) => a + r.amt, 0)) };
+}
 function computeMetrics(db, ref) {
   const P = db.projects || [], years = [...new Set(P.map(p => p.yr).filter(Boolean))].sort((a, b) => b - a), Y = years[0] || ref.getFullYear();
   const active = P.filter(p => ACTIVE.includes(p.c));
@@ -107,7 +134,8 @@ function computeMetrics(db, ref) {
     cc: (db.callCenter || []).filter(r => r.mes && +r.mes.slice(0, 4) === Y).reduce((a, r) => a + (r.tot || 0), 0),
     itr: itrRule.length, itrOpen: (db.itrs || []).filter(r => r.st && r.st !== 'Closed').length,
     rma: rY.length, rmaOpen: rOpen.length, rmaOld: rOpen.filter(r => r.dur === '> 30 dias').length,
-    ratOpen: (db.risks || []).filter(r => r.st === 'Open').length
+    ratOpen: (db.risks || []).filter(r => r.st === 'Open').length,
+    ...soMetrics(db.sellout, ref)
   };
 }
 
@@ -121,7 +149,8 @@ function buildInsights(db, ref, prev) {
 
   /* ---- resumo ---- */
   const summary = itx('summary', { w: weekNo, created: fmt(M.created), y: Y, active: fmt(M.active), tob: fmt(M.tob), tog: fmt(M.tog), val: usd(M.activeValue),
-    cc: fmt(M.cc), itr: fmt(M.itr), rma: fmt(M.rma), open: fmt(M.rmaOpen), old: M.rmaOld ? itx('summaryOld', { n: fmt(M.rmaOld) }) : '' });
+    cc: fmt(M.cc), itr: fmt(M.itr), rma: fmt(M.rma), open: fmt(M.rmaOpen), old: M.rmaOld ? itx('summaryOld', { n: fmt(M.rmaOld) }) : '' })
+    + (M.soY ? itx('summarySo', { v: usd(M.soTotal), y: M.soY, n: fmt(M.soOpps) }) : '');
 
   /* ---- comparação com a semana anterior (quando existe metrics.json salvo) ---- */
   if (prev && prev.metrics) {
@@ -196,6 +225,40 @@ function buildInsights(db, ref, prev) {
     if (pipe.length) highlights.push({ score: 35, text: itx('hPipe', { n: pipe.length, b: pipe.filter(m => /bidding/i.test(m.stage || '')).length }) });
   }
 
+  /* ---- Project SellOut ---- */
+  let sellout = null;
+  const SO = db.sellout || [];
+  if (SO.length && M.soY) {
+    const sy = M.soY, yr = SO.filter(r => r.y === sy), ytd = soYtd(SO, sy);
+    if (ytd && ytd.b && ytd.pct != null) {
+      const a = { m1: ML[0], m2: ML[ytd.lastMo - 1], a: usd(ytd.a), p: Math.abs(ytd.pct), py: sy - 1, b: usd(ytd.b) };
+      if (ytd.pct >= 5) highlights.push({ score: 88, text: itx('hSoUp', a) });
+      else if (ytd.pct <= -5) add(ytd.pct <= -15 ? 'high' : 'med', 72, itx('hSoDown', a), itx('xSoDown', { v: usd(ytd.b - ytd.a), py: sy - 1 }));
+    }
+    const opps = soByOpp(yr), tot = M.soTotal;
+    if (opps.length >= 8 && tot > 0) { const t5 = opps.slice(0, 5).reduce((a, o) => a + o.tot, 0), p = pctOf(t5, tot);
+      if (p >= 30) highlights.push({ score: 48, text: itx('hSoConc', { p, y: sy, v: usd(t5), top: `${trunc0(opps[0].name, 40)} (${usd(opps[0].tot)})` }) }); }
+    const ufs = soByUF(yr).filter(u => u.uf !== '?'), known = ufs.reduce((a, u) => a + u.tot, 0);
+    if (ufs.length >= 3 && known > 0) highlights.push({ score: 40, text: itx('hSoUf', { uf: `${ufs[0].uf} (${UF_NAME[ufs[0].uf] || ufs[0].uf})`, y: sy, v: usd(ufs[0].tot), p: pctOf(ufs[0].tot, known) }) });
+    if (M.soOpenOld >= 100000) {
+      const old = soByOpp(yr.filter(r => r.st === 'open' && r.d && daysBetween(ref, toDate(r.d)) > 60));
+      add(M.soOpenOld >= 1e6 ? 'high' : 'med', 66, itx('aSoOpen', { v: usd(M.soOpen), o: usd(M.soOpenOld), n: fmt(old.length) }),
+        itx('xSoOpen', { list: listNames(old.map(o => `${trunc0(o.name, 32)} (${usd(o.tot)})`), 3) }));
+    }
+    const mj = Object.values(soMajorMap(db)).filter(m => m.value > 0).map(m => Object.assign(m, { pct: pctOf(m.so, m.value) })).sort((a, b) => b.value - a.value);
+    const low = mj.filter(m => m.pct < 30);
+    if (low.length) add('med', 52, itx('aSoMajor', { n: low.length, list: listNames(low.map(m => `${trunc0(m.name, 28)} (${m.pct}%)`), 3) }), itx('xSoMajor', { list: listNames(low.map(m => trunc0(m.name, 28)), 3) }));
+    /* resumo para o relatório (fica no snapshot da semana, sem as linhas) */
+    const by = (arr, m) => Math.round(arr.filter(r => r.mo === m).reduce((a, r) => a + r.amt, 0));
+    const prevY = SO.filter(r => r.y === sy - 1), months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    sellout = { y: sy, total: tot, prj: Math.round(yr.filter(r => !r.svc).reduce((a, r) => a + r.amt, 0)), svc: Math.round(yr.filter(r => r.svc).reduce((a, r) => a + r.amt, 0)),
+      opps: M.soOpps, open: M.soOpen, openOld: M.soOpenOld, ytd,
+      months: months.map(m => by(yr, m)), prev: prevY.length ? months.map(m => by(prevY, m)) : null, lastMo: Math.max(0, ...yr.map(r => r.mo || 0)),
+      ufs: ufs.slice(0, 8).map(u => [u.uf, Math.round(u.tot)]), noUf: Math.round((soByUF(yr).find(u => u.uf === '?') || { tot: 0 }).tot),
+      top: opps.slice(0, 8).map(o => [trunc0(o.name, 60), o.uf || '–', Math.round(o.tot)]),
+      majors: mj.slice(0, 8).map(m => [trunc0(m.name, 40), Math.round(m.value), Math.round(m.so), m.pct]) };
+  }
+
   /* ---- riscos (RAT) ---- */
   const rOpenRat = (db.risks || []).filter(r => r.st === 'Open' && r.title);
   const highOld = rOpenRat.filter(r => r.imp === 'High' && r.ag === '> 30 days');
@@ -233,7 +296,7 @@ function buildInsights(db, ref, prev) {
     highlights: highlights.slice(0, INS_CFG.maxHighlights).map(h => h.text),
     alerts: al.map(a => ({ level: a.lvl, text: a.text })),
     actions: al.filter(a => a.action).map(a => a.action),
-    portfolio, majorRisks
+    portfolio, majorRisks, sellout
   };
 }
 /* Linha da carteira por PM, com singular/plural */

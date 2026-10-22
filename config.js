@@ -15,7 +15,8 @@ window.DASH_CONFIG = {
   files: {
     projetos: 'main.?control.?table',        // abas ProjectList, Technical Support, Call Center, ITR database
     rma: 'RMA.?consolidado',               // aba Database
-    riscos: 'Project.?Database'            // aba que começa com "RAT"
+    riscos: 'Project.?Database',           // aba que começa com "RAT"
+    sellout: 'sell.?out'                   // opcional: aba Order (pedidos de projeto); sem ele a aba Project SellOut fica escondida
   },
 
   // Chave dos mapas de fundo da CARTO (carto.com/basemaps/apikey). Vai na URL de cada imagem do mapa,

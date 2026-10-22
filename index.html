@@ -115,6 +115,17 @@ select,input[type=search]{font:15px var(--body);color:var(--ink);background:var(
 .ufrank em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted)}
 .uflbl{font:700 12px/16px var(--cond);color:var(--ink);text-align:center;text-shadow:0 0 3px var(--panel),0 0 3px var(--panel),0 0 2px var(--panel);pointer-events:none;white-space:nowrap}
 .maptip b{font-family:var(--cond);font-size:15px}
+#soMap{height:460px;border-radius:4px;border:1px solid var(--line);background:var(--panel2)}
+#soRank li{grid-template-columns:34px minmax(0,1fr) minmax(60px,90px) auto}
+#soRank li.on{background:var(--panel2)}
+#soRank .nm{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+#soRank .nm em{font-size:12px}
+.bar2{display:flex;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar2 i{display:block;height:100%}
+.ufchip{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:0 0 8px}
+table.mini{font-size:13px}
+table.mini th{font-size:13px;cursor:default}
+#tSo td:first-child{max-width:340px}
 .yearsel{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-left:auto}
 .yearsel select{min-width:0}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -251,6 +262,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <button role="tab" data-v="sup" aria-selected="false" data-i18n="tabSup"></button>
     <button role="tab" data-v="rma" aria-selected="false" data-i18n="tabRma"></button>
     <button role="tab" data-v="risk" aria-selected="false" data-i18n="tabRisk"></button>
+    <button role="tab" data-v="so" aria-selected="false" data-i18n="tabSo" hidden></button>
   </div>
 </nav>
 <div class="wrap" id="gate"><div class="panel gatebox"><h2 data-i18n="gateTitle"></h2><p id="gMsg"></p><button class="chip primary" id="bIn" hidden data-i18n="signIn"></button></div></div>
@@ -365,6 +377,31 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <p class="count" data-i18n="clickRow"></p>
   </div>
 </section>
+
+<section class="view" id="v-so">
+  <div class="filters">
+    <label><span data-i18n="fYear"></span><select id="soY"><option value="" data-i18n="soAllYears"></option></select></label>
+    <label><span data-i18n="soRep"></span><select id="soR"><option value="" data-i18n="all"></option></select></label>
+    <label><span data-i18n="soType"></span><select id="soT"><option value="" data-i18n="soPrjSvc"></option><option value="prj" data-i18n="soPrj"></option><option value="svc" data-i18n="soSvc"></option></select></label>
+    <label><span data-i18n="soAccType"></span><select id="soA"><option value="" data-i18n="allF"></option></select></label>
+  </div>
+  <div class="grid g4" id="soKpis"></div>
+  <div class="panel mt"><h2><span data-i18n="hSoM"></span><small id="soMSub"></small></h2><div class="chart tall"><canvas id="cSoM"></canvas></div></div>
+  <div class="panel mt" id="soMapBox"><h2><span data-i18n="hSoMap"></span><small data-i18n="sSoMap"></small></h2>
+    <div class="mapgrid"><div><div id="soMap" role="img" data-i18n-aria="hSoMap"></div><div class="maplegend" id="soLegend"></div></div>
+      <div><ul class="ufrank" id="soRank"></ul><p class="count" id="soRankNote"></p><p class="count" data-i18n="soUfHow"></p></div></div>
+  </div>
+  <div class="grid g3 mt">
+    <div class="panel"><h2 data-i18n="hSoPl"></h2><div class="chart tall"><canvas id="cSoPl"></canvas></div></div>
+    <div class="panel"><h2 data-i18n="hSoAcc"></h2><div class="chart tall"><canvas id="cSoAcc"></canvas></div></div>
+    <div class="panel"><h2 data-i18n="hSoRep"></h2><div class="chart tall"><canvas id="cSoRep"></canvas></div></div>
+  </div>
+  <div class="panel mt"><h2><span data-i18n="hSoOpp"></span><small id="soCount"></small></h2>
+    <p class="ufchip" id="soUfChip" hidden><span id="soUfName"></span><button class="chip" id="soUfClear" data-i18n="soClear"></button></p>
+    <div class="tblwrap paged"><table id="tSo"><thead><tr><th data-i18n="soOpp"></th><th data-i18n="rpState"></th><th class="num" data-i18n="soPrj"></th><th class="num" data-i18n="soSvc"></th><th class="num">Total (USD)</th><th class="num" data-i18n="soOrders"></th><th data-i18n="soLast"></th><th class="num" data-i18n="soReal"></th></tr></thead><tbody></tbody></table></div>
+    <p class="count" data-i18n="soClick"></p><p class="count" data-i18n="soSrc"></p>
+  </div>
+</section>
 </main>
 <dialog id="dlgRisk" class="dlg" aria-labelledby="rTitle">
   <h2 id="rTitle" data-i18n="dlgNewTitle"></h2>
@@ -404,9 +441,10 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 </dialog>
 <footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
-<script>window.APP_VERSION="2026.10.16-1";</script>
-<script src="config.js?v=2026.10.16-1"></script>
-<script src="insights.js?v=2026.10.16-1"></script>
+<script>window.APP_VERSION="2026.10.22-1";</script>
+<script src="config.js?v=2026.10.22-1"></script>
+<script src="insights.js?v=2026.10.22-1"></script>
+<script src="sellout.js?v=2026.10.22-1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
@@ -422,7 +460,16 @@ pt: {
   export:'Exportar relatório', exporting:'Gerando…', xTitle:'Exportar relatório semanal', xWeekLbl:'Semana dos dados', xCurrent:'Dados atuais (semana {w})', xWeekOpt:'Semana {w} de {y}, salva em {d}', xLoading:'Buscando semanas salvas…', xNoWeeks:'Ainda não há semanas anteriores salvas.', xListFail:'Não foi possível listar as semanas salvas. Dá pra exportar os dados atuais.', xCancel:'Cancelar', snapMissing:'Não encontrei os dados da semana {w} (snapshot.json).', snapSaved:'Semana {k} salva no SharePoint às {h}.', snapUpToDate:'Semana {k} já está salva no SharePoint.', snapNoPerm:'Semana {k} não foi salva: sua conta não tem permissão de edição na pasta.', snapErr:'Não foi possível salvar a semana {k} no SharePoint.', exportFail:'Não foi possível gerar o relatório: {m}', rpTitle:'Relatório semanal', rpWeek:'Semana {w}', rpSecExec:'Resumo executivo', rpSecPort:'Carteira de projetos', rpSecMajor:'Major Projects ganhos', rpSecSup:'Suporte técnico', rpSecRma:'RMA', rpSecRisk:'Riscos e issues', rpDonut:'Projetos {y}', rpLevel:'Projetos atuais por nível ({n})', rpProd:'Issues por produto (últimas 8 semanas)', rpYoY:'RMAs por mês: {y} x {p}', rpState:'Estado', rpMore:'+{n} itens no painel.', rpRat:'Riscos e issues em aberto (importância alta)', rpHot:'Riscos em aberto nos Major Projects',
   weekLine:'Semana <strong>{w}</strong> · dados atualizados em <strong>{d}</strong> às {h}', weekTip:'Última alteração nos arquivos da pasta: {n}', hSummaryW:'Resumo da semana {w}',
   refresh:'Atualizar dados', refreshing:'Atualizando…', signOut:'Sair', signIn:'Entrar com a conta Microsoft',
-  tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues',
+  tabExec:'Visão executiva', tabProj:'Projetos', tabSup:'Suporte técnico', tabRma:'RMA', tabRisk:'Riscos e issues', tabSo:'Project SellOut',
+  soAllYears:'Todos os anos', soRep:'Vendedor', soType:'Tipo de venda', soPrjSvc:'Projeto + serviço', soPrj:'Projeto', soSvc:'Serviço', soAccType:'Tipo de conta',
+  soK1:'Sell-out líquido ({y})', soK1d:'Projeto {p} · serviço {s}', soK2:'Oportunidades com pedido', soK2d:'{n} pedidos', soK3:'Aguardando embarque', soK3d:'{v} há mais de 60 dias',
+  soK4:'{m1}–{m2} contra {py}', soK4d:'{a} contra {b}', soK4n:'Sem ano anterior para comparar',
+  hSoM:'Sell-out por mês', hSoMap:'Sell-out por estado', sSoMap:'estado deduzido do nome da oportunidade', soUfHow:'Clique num estado (no mapa ou na lista) para ver as oportunidades dele. Oportunidades nacionais ou sem local no nome ficam em "Sem estado".',
+  soNoUf:'Sem estado', soOpp1:'1 oportunidade', soOppN:'{n} oportunidades', soTipTot:'Total {v}', soTipNone:'Sem sell-out', soScale:'USD:',
+  hSoPl:'Por linha de produto', hSoAcc:'Maiores clientes (conta)', hSoRep:'Por vendedor', hSoOpp:'Oportunidades', soOpp:'Oportunidade', soOrders:'Pedidos', soLast:'Último pedido', soReal:'Major: % realizado',
+  soOf:'de {v}', soNoOpp:'Nenhuma oportunidade com esses filtros.', soCount:'{n} oportunidades · {v}', soClear:'Limpar estado', soClick:'Clique numa linha para ver os pedidos.',
+  soSrc:'Fonte: arquivo project_sellout, aba Order. Valor = Amount After Discount (USD), líquido de cancelamentos. Serviço = pedidos do tipo 仅开票 (só faturamento). "% realizado" compara o sell-out da oportunidade com o valor do Major Project ganho de mesmo código.',
+  rpSoMonth:'Sell-out por mês, em milhares de USD: {y} x {p}', rpSoTop:'Maiores oportunidades de {y}', rpSoMajor:'Major Projects: sell-out x valor', soOrder:'Pedido', soDate:'Data', soStDone:'Fechado', soStOpen:'Aguardando embarque', soStCancel:'Cancelado',
   needLogin:'Entre com sua conta Microsoft da empresa para ver os dados.', connecting:'Conectando…', loadingFolder:'Carregando os dados da pasta…',
   cfgIncomplete:'Configuração incompleta: preencha clientId e tenantId em config.js.', refreshFail:'Falha ao atualizar: {m}',
   source:'Dados lidos do SharePoint às {h}', fileLine:'{n} (alterado em {d})', sheetLine:', aba {s}', foot:'Arquivos: {f}.',
@@ -467,7 +514,16 @@ en: {
   export:'Export report', exporting:'Generating…', xTitle:'Export weekly report', xWeekLbl:'Data week', xCurrent:'Current data (week {w})', xWeekOpt:'Week {w} of {y}, saved on {d}', xLoading:'Looking for saved weeks…', xNoWeeks:'No previous weeks saved yet.', xListFail:'Could not list the saved weeks. You can still export the current data.', xCancel:'Cancel', snapMissing:'Could not find the data for week {w} (snapshot.json).', snapSaved:'Week {k} saved to SharePoint at {h}.', snapUpToDate:'Week {k} is already saved to SharePoint.', snapNoPerm:'Week {k} was not saved: your account has no edit permission on the folder.', snapErr:'Could not save week {k} to SharePoint.', exportFail:'Could not generate the report: {m}', rpTitle:'Weekly report', rpWeek:'Week {w}', rpSecExec:'Executive summary', rpSecPort:'Project portfolio', rpSecMajor:'Major Projects won', rpSecSup:'Technical support', rpSecRma:'RMA', rpSecRisk:'Risks & issues', rpDonut:'{y} projects', rpLevel:'Current projects by level ({n})', rpProd:'Issues by product (last 8 weeks)', rpYoY:'RMAs by month: {y} vs {p}', rpState:'State', rpMore:'+{n} more items in the dashboard.', rpRat:'Open risks and issues (high importance)', rpHot:'Open risks on Major Projects',
   weekLine:'Week <strong>{w}</strong> · data updated on <strong>{d}</strong> at {h}', weekTip:'Latest change in the folder files: {n}', hSummaryW:'Week {w} summary',
   refresh:'Refresh data', refreshing:'Refreshing…', signOut:'Sign out', signIn:'Sign in with your Microsoft account',
-  tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues',
+  tabExec:'Executive view', tabProj:'Projects', tabSup:'Technical support', tabRma:'RMA', tabRisk:'Risks & issues', tabSo:'Project SellOut',
+  soAllYears:'All years', soRep:'Sales rep', soType:'Sale type', soPrjSvc:'Project + service', soPrj:'Project', soSvc:'Service', soAccType:'Account type',
+  soK1:'Net sell-out ({y})', soK1d:'Project {p} · service {s}', soK2:'Opportunities with orders', soK2d:'{n} orders', soK3:'Awaiting shipment', soK3d:'{v} older than 60 days',
+  soK4:'{m1}–{m2} vs {py}', soK4d:'{a} vs {b}', soK4n:'No previous year to compare',
+  hSoM:'Sell-out by month', hSoMap:'Sell-out by state', sSoMap:'state inferred from the opportunity name', soUfHow:'Click a state (on the map or in the list) to see its opportunities. Nationwide opportunities, or names with no location, go under "No state".',
+  soNoUf:'No state', soOpp1:'1 opportunity', soOppN:'{n} opportunities', soTipTot:'Total {v}', soTipNone:'No sell-out', soScale:'USD:',
+  hSoPl:'By product line', hSoAcc:'Top customers (account)', hSoRep:'By sales rep', hSoOpp:'Opportunities', soOpp:'Opportunity', soOrders:'Orders', soLast:'Last order', soReal:'Major: % realized',
+  soOf:'of {v}', soNoOpp:'No opportunities match these filters.', soCount:'{n} opportunities · {v}', soClear:'Clear state', soClick:'Click a row to see its orders.',
+  soSrc:'Source: project_sellout file, Order sheet. Value = Amount After Discount (USD), net of cancellations. Service = orders of type 仅开票 (invoice only). "% realized" compares the opportunity\'s sell-out with the value of the won Major Project with the same code.',
+  rpSoMonth:'Sell-out by month, USD thousands: {y} vs {p}', rpSoTop:'Top opportunities of {y}', rpSoMajor:'Major Projects: sell-out vs value', soOrder:'Order', soDate:'Date', soStDone:'Closed', soStOpen:'Awaiting shipment', soStCancel:'Cancelled',
   needLogin:'Sign in with your company Microsoft account to see the data.', connecting:'Connecting…', loadingFolder:'Loading data from the folder…',
   cfgIncomplete:'Incomplete setup: fill in clientId and tenantId in config.js.', refreshFail:'Refresh failed: {m}',
   source:'Data loaded from SharePoint at {h}', fileLine:'{n} (modified {d})', sheetLine:', sheet {s}', foot:'Files: {f}.',
@@ -723,10 +779,16 @@ async function loadData() {
   /* riscos registrados pelo painel (BDMS_Riscos.xlsx): opcional, só existe depois do primeiro registro */
   const fRisk = items.find(i => i.file && i.name.toLowerCase() === RISK_FILE.toLowerCase());
   const book = fRisk ? parseRiskBook(await readWorkbook(fRisk, token, ['Risks', 'RiskUpdates'])) : { risks: [], updates: [] };
-  const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { ratRaw: k.risks, riskBook: book });
+  /* Project SellOut (opcional): pedidos de projeto, aba Order */
+  const soRe = new RegExp(CFG.files.sellout || 'sell.?out', 'i');
+  const fSo = items.filter(i => i.file && /\.xlsx$/i.test(i.name) && soRe.test(i.name)).sort((a, b) => new Date(b.lastModifiedDateTime) - new Date(a.lastModifiedDateTime))[0];
+  let sellout = null;
+  if (fSo) { try { sellout = parseSellout(await readWorkbook(fSo, token, ['Order'])); } catch (e) { console.warn('sell-out', e); } }
+  const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { ratRaw: k.risks, riskBook: book, sellout });
   db.risks = mergeRisks(db);
   const files = [fP, fR, fK].map(f => ({ name: f.name, mod: f.lastModifiedDateTime, id: f.id }));
   files[2].sheet = k.ratSheet;
+  if (sellout) files.push({ name: fSo.name, mod: fSo.lastModifiedDateTime, id: fSo.id, sheet: 'Order' });
   return { db, rep, files, root: { driveId: root.parentReference.driveId, id: root.id }, loadedAt: new Date() };
 }
 
@@ -819,7 +881,7 @@ async function saveSnapshot(load, force) {
     }
     const acc = msalApp.getActiveAccount() || {};
     const snap = { version: 1, week: key, savedAt: new Date().toISOString(), savedBy: acc.name || acc.username || null,
-      files: load.files.map(f => ({ name: f.name, mod: f.mod, sheet: f.sheet || null })), insights: load.ins || null, db: load.db };
+      files: load.files.map(f => ({ name: f.name, mod: f.mod, sheet: f.sheet || null })), insights: load.ins || null, db: Object.assign({}, load.db, { sellout: undefined }) };   // as linhas de sell-out ficam fora (são muitas); o resumo vai em insights e a cópia do Excel fica na pasta
     await graphSend('PUT', `/drives/${root.driveId}/items/${wf.id}:/snapshot.json:/content`, token, JSON.stringify(snap), 'application/json');
     if (load.ins) await graphSend('PUT', `/drives/${root.driveId}/items/${wf.id}:/metrics.json:/content`, token,
       JSON.stringify({ version: 1, week: key, savedAt: snap.savedAt, metrics: load.ins.metrics }), 'application/json');
@@ -1284,7 +1346,7 @@ $('#fUpd').addEventListener('submit',async e=>{
 $$('dialog.dlg [data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 /* ===== Navegação, tema e idioma ===== */
-const renders={exec:renderExec,proj:renderProj,sup:renderSup,rma:renderRma,risk:renderRisk};
+const renders={exec:renderExec,proj:renderProj,sup:renderSup,rma:renderRma,risk:renderRisk,so:renderSo};
 let cur='exec';
 function show(v){cur=v;$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));$$('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));renders[v]();try{localStorage.setItem('tab',v)}catch(e){}}
 $$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v)));
@@ -1346,9 +1408,9 @@ async function refresh(first){
   try{
     const d=await loadData(); DB=d.db; LOAD=d; INS=null; rebuildInsights(); d.ins=INS;
     renderMeta();
-    setupExec(); setupProj(); setupSup(); setupRma(); setupRisk(); BOUND=true;
+    setupExec(); setupProj(); setupSup(); setupRma(); setupRisk(); setupSo(); BOUND=true;
     gateState=null; gate.hidden=true; app.hidden=false; $('#acts').hidden=false;
-    if(first){let tb='exec'; try{tb=localStorage.getItem('tab')||'exec'}catch(e){} show(renders[tb]?tb:'exec');} else rerender();
+    if(first){let tb='exec'; try{tb=localStorage.getItem('tab')||'exec'}catch(e){} show(renders[tb]&&!$(`nav.tabs button[data-v=${tb}]`).hidden?tb:'exec');} else rerender();
     if(SNAP.auto) saveSnapshot(d).then(r=>{ if(LOAD===d){ d.snap=r; renderMeta(); } });
     /* comparação com a semana anterior salva: entra nos destaques assim que chega */
     readPrevMetrics(d,isoWeekKey(lastFileDate(d.files))).then(pm=>{ if(LOAD!==d||!pm) return; PREVM=pm; rebuildInsights(); d.ins=INS; if(cur==='exec') renderExec(); });
