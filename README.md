@@ -92,6 +92,8 @@ Quem pode ver os dados é definido pelo **compartilhamento da pasta** no SharePo
 
 ## Registro e atualização de riscos (aba Riscos e issues)
 
+- O primeiro quadro, **Riscos em aberto nos Major Projects**, vem **só** da aba `Major Risks` do Project Database (colunas Customer, Risk / Issue e Risk/Issue Information). Linhas mescladas, em que a situação continua na linha de baixo, são juntadas ao item de cima. O slide de riscos dos Major Projects no relatório usa a mesma aba. Se a aba não existir, o quadro mostra que não há itens.
+
 - **+ Novo risco:** abre um formulário com projeto, PM responsável, tipo (risco ou issue), classificação (alta, média, baixa), descrição e data estimada de resolução. Projeto e PM sugerem nomes já usados no RAT, nos Major Projects e nos projetos ativos, mas aceitam texto livre.
 - **Atualizar risco:** clique numa linha do registro para abrir o histórico e use o botão **Atualizar risco**. Cada atualização tem data, texto e, se precisar, novo status (em aberto/fechado) e nova data estimada. Funciona para os riscos novos e para os que já estão no RAT do Project Database.
 - **Histórico:** o painel expandido mostra, em ordem cronológica, o registro inicial (andamento do RAT ou descrição do risco novo) e depois cada atualização, com autor, data, mudança de status e nova previsão.

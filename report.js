@@ -261,10 +261,13 @@
     /* 6. Riscos e issues do report */
     {
       const s = slide(t('rpSecRisk'), t('rpHot'));
-      const mr = (weekInsights(ref).majorRisks || []).slice(0, 10);
-      if (mr.length) table(s, [t('cProject'), 'Delivery PM', t('cOpenRisk'), t('cUpdated')],
-        mr.map(h => [trunc(h.name, 48), h.pm || '–', h.risks.slice(0, 2).map(x => '• ' + trunc(x, 150)).join('\n'), fdate(h.upd)]), M, 1.05, CW, [3.0, 1.7, CW - 5.9, 1.2], 8.5);
+      /* aba Major Risks do Project Database (semanas salvas antes desta versão guardavam outro formato: sem "risk", ficam de fora) */
+      const all = (weekInsights(ref).majorRisks || []).filter(h => h.risk), mr = all.slice(0, 12);
+      if (mr.length) table(s, [t('cCustomer'), t('cRiskIssue'), t('cSituation')],
+        mr.map(h => [trunc(h.cust, 30), trunc(h.risk, 110), trunc(h.info.join(' '), 260)]), M, 1.05, CW, [2.2, 4.0, CW - 6.2], 8.5);
       else s.addText(t('noMajorRisks'), { x: M, y: 1.2, w: CW, h: 0.4, isTextBox: true, fontFace: FONT, fontSize: 12, color: COL.muted, margin: 0 });
+      if (all.length > 12) s.addText(t('rpMore', { n: all.length - 12 }), { x: M, y: 6.75, w: CW, h: 0.25, isTextBox: true, fontFace: FONT, fontSize: 9, color: COL.muted, margin: 0 });
+      s.addNotes(t('hotSrc'));
     }
 
     /* 7. Riscos e issues em aberto (RAT) */

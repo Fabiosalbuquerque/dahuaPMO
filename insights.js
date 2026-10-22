@@ -282,11 +282,8 @@ function buildInsights(db, ref, prev) {
   rOpenRat.forEach(r => { const o = pf[personKey(r.owner)]; if (o) { o.rat++; if (r.imp === 'High') o.ratH++; } });
   const portfolio = Object.values(pf).filter(o => o.mj || o.ac >= 2 || o.rat).sort((a, b) => (b.mjv + b.acv) - (a.mjv + a.acv));
 
-  /* ---- riscos registrados nos Major Projects ganhos ---- */
-  const majorRisks = majors.map(m => {
-    const items = String(m.risk || '').split(/\n?\s*\d+\.\s*Open Risk:\s*/i).map(x => x.replace(/-[^-()]+\(\d+\)\s*$/, '').trim()).filter(x => x.length > 3);
-    return { name: m.name, pm: cleanName(m.pm), upd: m.progDate, risks: [...new Set(items)] };
-  }).filter(x => x.risks.length);
+  /* ---- riscos dos Major Projects: aba Major Risks do Project Database ---- */
+  const majorRisks = (db.majorRiskSheet || []).map(x => ({ cust: x.cust, risk: x.risk, info: x.info }));
 
   alerts.sort((a, b) => b.score - a.score);
   highlights.sort((a, b) => b.score - a.score);

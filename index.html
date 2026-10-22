@@ -172,6 +172,8 @@ dialog.dlg .chip.primary{padding:7px 16px;font-size:15px}
 .phead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
 .phead h2{margin:0}
 .pill.src{color:var(--s1);margin-left:6px;font-size:11px}
+#tHot tr.mr td:not([rowspan]){border-bottom-style:dashed}
+#tHot td:nth-child(2){max-width:320px}
 .hist{padding:6px 4px 10px;color:var(--ink)}
 .hist .hhead{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:8px}
 .hist .hhead .chip{margin-left:auto}
@@ -365,7 +367,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 
 <section class="view" id="v-risk">
   <div class="panel"><h2 data-i18n="hHot"></h2>
-    <div class="tblwrap paged"><table id="tHot"><thead><tr><th data-i18n="cProject"></th><th>Delivery PM</th><th data-i18n="cOpenRisk"></th><th data-i18n="cUpdated"></th></tr></thead><tbody></tbody></table></div></div>
+    <div class="tblwrap paged"><table id="tHot"><thead><tr><th data-i18n="cCustomer"></th><th data-i18n="cRiskIssue"></th><th data-i18n="cSituation"></th></tr></thead><tbody></tbody></table></div><p class="count" data-i18n="hotSrc"></p></div>
   <div class="panel mt"><div class="phead"><h2><span data-i18n="hRat"></span><small>RAT</small></h2><button class="chip primary" id="bNewRisk" data-i18n="bNewRisk"></button></div>
     <div class="filters">
       <label>Status<select id="kS"><option value="Open" data-i18n="stOpen"></option><option value="" data-i18n="all"></option><option value="Closed" data-i18n="stClosed"></option></select></label>
@@ -441,10 +443,10 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 </dialog>
 <footer><div class="wrap"><div id="foot"></div><img class="logo-foot" src="logo-dahua-white.png" alt="" width="520" height="155"></div></footer>
 
-<script>window.APP_VERSION="2026.10.22-1";</script>
-<script src="config.js?v=2026.10.22-1"></script>
-<script src="insights.js?v=2026.10.22-1"></script>
-<script src="sellout.js?v=2026.10.22-1"></script>
+<script>window.APP_VERSION="2026.10.22-2";</script>
+<script src="config.js?v=2026.10.22-2"></script>
+<script src="insights.js?v=2026.10.22-2"></script>
+<script src="sellout.js?v=2026.10.22-2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
@@ -487,7 +489,7 @@ pt: {
   lifeText:'{a} projetos ativos hoje e {w} já em garantia. A barra mostra onde está cada projeto acompanhado pelo escritório.',
   kTickets:'Tickets de suporte no ano', kLastMonth:'{n} em {m}', kRmaCreated:'RMAs criados em 2026', kRmaPrev:'{n} em todo o 2025',
   kRmaOpen:'RMAs de 2026 em aberto', kOver30:'{n} com mais de 30 dias', kRiskOpen:'Riscos e issues em aberto', kHighImp:'{n} de importância alta',
-  hSummary:'Resumo da semana', hHighlights:'Destaques', hAlerts:'Riscos e alertas', hNext:'Próximos passos', hSuperv:'Carteira por PM', aiNote:'Resumo, destaques, alertas, próximos passos e carteira gerados automaticamente pelo painel a partir das planilhas da semana.', cOpenRisk:'Riscos em aberto', noMajorRisks:'Nenhum risco em aberto registrado nos Major Projects.',
+  hSummary:'Resumo da semana', hHighlights:'Destaques', hAlerts:'Riscos e alertas', hNext:'Próximos passos', hSuperv:'Carteira por PM', aiNote:'Resumo, destaques, alertas, próximos passos e carteira gerados automaticamente pelo painel a partir das planilhas da semana.', cOpenRisk:'Riscos em aberto', noMajorRisks:'Nenhum item na aba Major Risks do Project Database.', hotSrc:'Fonte: Project Database, aba Major Risks.',
   fType:'Tipo', fLevel:'Nível', fPhase:'Fase', fInd:'Indústria', fSearch:'Buscar', all:'Todos', allF:'Todas', searchPh:'Projeto, cliente ou PM',
   kCurProj:'Projetos atuais', kContract:'Valor total de contrato',
   hLevel:'Projetos por nível', sLevel:'por tipo', hPhase:'Projetos por fase', hInd:'Projetos por indústria', sInd:'valor de contrato em USD',
@@ -541,7 +543,7 @@ en: {
   lifeText:'{a} projects active today and {w} already in warranty. The bar shows where each project tracked by the PMO stands.',
   kTickets:'Support tickets this year', kLastMonth:'{n} in {m}', kRmaCreated:'RMAs created in 2026', kRmaPrev:'{n} in all of 2025',
   kRmaOpen:'Open 2026 RMAs', kOver30:'{n} older than 30 days', kRiskOpen:'Open risks and issues', kHighImp:'{n} high importance',
-  hSummary:'Weekly summary', hHighlights:'Highlights', hAlerts:'Risks & alerts', hNext:'Next steps', hSuperv:'Portfolio by PM', aiNote:'Summary, highlights, alerts, next steps and portfolio generated automatically by the dashboard from this week\'s spreadsheets.', cOpenRisk:'Open risks', noMajorRisks:'No open risks recorded on the Major Projects.',
+  hSummary:'Weekly summary', hHighlights:'Highlights', hAlerts:'Risks & alerts', hNext:'Next steps', hSuperv:'Portfolio by PM', aiNote:'Summary, highlights, alerts, next steps and portfolio generated automatically by the dashboard from this week\'s spreadsheets.', cOpenRisk:'Open risks', noMajorRisks:'No items in the Major Risks sheet of the Project Database.', hotSrc:'Source: Project Database, Major Risks sheet.',
   fType:'Type', fLevel:'Level', fPhase:'Phase', fInd:'Industry', fSearch:'Search', all:'All', allF:'All', searchPh:'Project, customer or PM',
   kCurProj:'Current projects', kContract:'Total contract value',
   hLevel:'Projects by level', sLevel:'by type', hPhase:'Projects by phase', hInd:'Projects by industry', sInd:'contract value in USD',
@@ -765,6 +767,22 @@ function parseRiscos(wb) {
   return { risks, ratSheet: name };
 }
 
+/* Aba "Major Risks" do Project Database: Customer | Risk / Issue | Risk/Issue Information.
+   Células mescladas: a linha de baixo vem sem cliente e sem risco e continua a situação do item de cima. */
+function parseMajorRisks(wb) {
+  const name = wb.SheetNames.find(n => /^\s*major\s*risk/i.test(n));
+  if (!name) return null;
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: null, raw: true });
+  const h = rows.findIndex(r => r && r.some(c => /customer/i.test(String(c || ''))));
+  const out = [];
+  rows.slice(h + 1).forEach(r => {
+    const [c, k, i] = [0, 1, 2].map(j => r && r[j] != null && String(r[j]).trim() ? String(r[j]).replace(/\s+/g, ' ').trim() : null);
+    if (c || k) out.push({ cust: c || (out.length ? out[out.length - 1].cust : '–'), risk: k || '–', info: i ? [i] : [] });
+    else if (i && out.length) out[out.length - 1].info.push(i);
+  });
+  return out;
+}
+
 async function loadData() {
   const token = await getToken();
   const { root, items } = await listFolder(token);
@@ -784,7 +802,7 @@ async function loadData() {
   const fSo = items.filter(i => i.file && /\.xlsx$/i.test(i.name) && soRe.test(i.name)).sort((a, b) => new Date(b.lastModifiedDateTime) - new Date(a.lastModifiedDateTime))[0];
   let sellout = null;
   if (fSo) { try { sellout = parseSellout(await readWorkbook(fSo, token, ['Order'])); } catch (e) { console.warn('sell-out', e); } }
-  const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { ratRaw: k.risks, riskBook: book, sellout });
+  const db = Object.assign({}, parseProjetos(wP), parseRma(wR), { ratRaw: k.risks, majorRiskSheet: parseMajorRisks(wK), riskBook: book, sellout });
   db.risks = mergeRisks(db);
   const files = [fP, fR, fK].map(f => ({ name: f.name, mod: f.lastModifiedDateTime, id: f.id }));
   files[2].sheet = k.ratSheet;
@@ -1251,7 +1269,12 @@ $('#ufRank').addEventListener('click',e=>{const li=e.target.closest('li[data-uf]
 $$('#mapMode .chip').forEach(c=>c.addEventListener('click',()=>{mapMode=c.dataset.m;$$('#mapMode .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));drawMap();}));
 
 /* ===== Riscos ===== */
-function renderHot(){ if(!INS) rebuildInsights(); paged('tHot',((INS&&INS.majorRisks)||[]).map(h=>`<tr><td><strong>${esc(h.name)}</strong></td><td>${esc(h.pm||'–')}</td><td>${h.risks.slice(0,3).map(x=>`<div>• ${esc(trunc0(x,220))}</div>`).join('')}</td><td>${fdate(h.upd)}</td></tr>`),`<tr><td colspan="4">${t('noMajorRisks')}</td></tr>`); }
+/* riscos dos Major Projects: só a aba Major Risks do Project Database, um cliente por linha */
+function renderHot(){
+  const g=[]; (DB.majorRiskSheet||[]).forEach(x=>{ const k=x.cust.toLowerCase(); let o=g.find(y=>y.k===k); if(!o) g.push(o={k,cust:x.cust,items:[]}); o.items.push(x); });
+  /* cada cliente é um bloco de linhas (a paginação conta clientes), com o nome mesclado nas linhas dos seus itens */
+  paged('tHot',g.map(o=>o.items.map((x,i)=>`<tr class="${i<o.items.length-1?'mr':''}">${i?'':`<td rowspan="${o.items.length}"><strong>${esc(o.cust)}</strong></td>`}<td>${esc(x.risk)}</td><td>${x.info.length?x.info.map(esc).join('<br>'):'–'}</td></tr>`).join('')),`<tr><td colspan="3">${t('noMajorRisks')}</td></tr>`);
+}
 function setupRisk(){
   const kp=$('#kP').value; $('#kP').length=1;
   [...new Set(DB.risks.map(r=>r.project).filter(Boolean))].sort().forEach(p=>$('#kP').insertAdjacentHTML('beforeend',`<option>${esc(p)}</option>`)); $('#kP').value=[...$('#kP').options].some(o=>o.value===kp)?kp:'';
